@@ -3721,7 +3721,7 @@ public:
 
     @since 3.1.1
 */
-class wxPanGestureEvent : class wxGestureEvent
+class wxPanGestureEvent : public wxGestureEvent
 {
 public:
     /**
@@ -3773,7 +3773,7 @@ public:
     /**
         Sets the zoom Factor.
     */
-    double SetZoomFactor() const;
+    void SetZoomFactor(double zoomFactor);
 };
 
 
@@ -4477,8 +4477,6 @@ public:
 
     An event being sent when the frame is iconized (minimized) or restored.
 
-    @onlyfor{wxmsw,wxgtk}
-
     @beginEventTable{wxIconizeEvent}
     @event{EVT_ICONIZE(func)}
         Process a @c wxEVT_ICONIZE event.
@@ -4764,14 +4762,12 @@ wxEventType wxNewEventType();
 /**
     Helper macro for definition of custom event table macros.
 
-    This macro must only be used if wxEVENTS_COMPATIBILITY_2_8 is 1, otherwise
-    it is better and more clear to just use the address of the function
-    directly as this is all this macro does in this case. However it needs to
-    explicitly cast @a func to @a functype, which is the type of wxEvtHandler
-    member function taking the custom event argument when
-    wxEVENTS_COMPATIBILITY_2_8 is 0.
+    This macro casts the given event handler to the given function type using
+    @c static_cast to ensure that the actual handler is indeed compatible with
+    it, before (unsafely) casting it to a generic function pointer used by the
+    event tables.
 
-    See wx__DECLARE_EVT0 for an example of use.
+    See wx__DECLARE_EVT1 for an example of use.
 
     @see @ref overview_events_custom_ownclass
  */
@@ -4932,6 +4928,7 @@ wxEventType wxEVT_SET_FOCUS;
 wxEventType wxEVT_KILL_FOCUS;
 wxEventType wxEVT_CHILD_FOCUS;
 wxEventType wxEVT_MOUSEWHEEL;
+wxEventType wxEVT_MAGNIFY;
 wxEventType wxEVT_AUX1_DOWN;
 wxEventType wxEVT_AUX1_UP;
 wxEventType wxEVT_AUX1_DCLICK;
@@ -4965,6 +4962,12 @@ wxEventType wxEVT_SCROLLWIN_PAGEUP;
 wxEventType wxEVT_SCROLLWIN_PAGEDOWN;
 wxEventType wxEVT_SCROLLWIN_THUMBTRACK;
 wxEventType wxEVT_SCROLLWIN_THUMBRELEASE;
+wxEventType wxEVT_GESTURE_PAN;
+wxEventType wxEVT_GESTURE_ZOOM;
+wxEventType wxEVT_GESTURE_ROTATE;
+wxEventType wxEVT_TWO_FINGER_TAP;
+wxEventType wxEVT_LONG_PRESS;
+wxEventType wxEVT_PRESS_AND_TAP;
 wxEventType wxEVT_SIZE;
 wxEventType wxEVT_MOVE;
 wxEventType wxEVT_CLOSE_WINDOW;

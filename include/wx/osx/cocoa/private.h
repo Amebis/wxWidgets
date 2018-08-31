@@ -288,6 +288,10 @@ protected :
     CGWindowLevel   m_macWindowLevel;
     WXWindow        m_macWindow;
     void *          m_macFullScreenData ;
+    
+private:
+    void SetUpForModalParent();
+    
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxNonOwnedWindowCocoaImpl);
 };
 
@@ -375,6 +379,7 @@ public:
     }
 
     - (void)textDidChange:(NSNotification *)aNotification;
+    - (void)changeColor:(id)sender;
 
     @end
 
@@ -413,7 +418,13 @@ public:
 
     @end
 
-    void WXDLLIMPEXP_CORE wxOSXCocoaClassAddWXMethods(Class c);
+    // this enum declares which methods should not be overridden in the native view classes
+    enum wxOSXSkipOverrides {
+        wxOSXSKIP_NONE = 0x0,
+        wxOSXSKIP_DRAW = 0x1
+    };
+
+    void WXDLLIMPEXP_CORE wxOSXCocoaClassAddWXMethods(Class c, wxOSXSkipOverrides skipFlags = wxOSXSKIP_NONE);
 
     /*
     We need this for ShowModal, as the sheet just disables the parent window and
@@ -495,6 +506,23 @@ const short kwxCursorLast = kwxCursorWatch;
 extern ClassicCursor gMacCursors[];
 
 extern NSLayoutManager* gNSLayoutManager;
+
+// NSString<->wxString
+
+wxString wxStringWithNSString(NSString *nsstring);
+NSString* wxNSStringWithWxString(const wxString &wxstring);
+
+// helper class for setting the current appearance to the
+// effective appearance and restore when exiting scope
+
+class WXDLLIMPEXP_CORE wxOSXEffectiveAppearanceSetter
+{
+public:
+    wxOSXEffectiveAppearanceSetter();
+    ~wxOSXEffectiveAppearanceSetter();
+private:
+    void * formerAppearance;
+};
 
 #endif // wxUSE_GUI
 

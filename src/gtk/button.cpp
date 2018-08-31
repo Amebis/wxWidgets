@@ -17,9 +17,7 @@
 
 #include "wx/stockitem.h"
 
-#include <gtk/gtk.h>
 #include "wx/gtk/private.h"
-#include "wx/gtk/private/gtk2-compat.h"
 #include "wx/gtk/private/list.h"
 
 // ----------------------------------------------------------------------------
@@ -119,7 +117,17 @@ bool wxButton::Create(wxWindow *parent,
     else if (HasFlag(wxBU_BOTTOM))
         y_alignment = 1.0;
 
+#ifdef __WXGTK4__
+    if (useLabel)
+    {
+        g_object_set(gtk_bin_get_child(GTK_BIN(m_widget)),
+            "xalign", x_alignment, "yalign", y_alignment, NULL);
+    }
+#else
+    wxGCC_WARNING_SUPPRESS(deprecated-declarations)
     gtk_button_set_alignment(GTK_BUTTON(m_widget), x_alignment, y_alignment);
+    wxGCC_WARNING_RESTORE()
+#endif
 
     if ( useLabel )
         SetLabel(label);
@@ -173,7 +181,7 @@ wxSize wxButtonBase::GetDefaultSize()
         GtkWidget *box = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
 #if defined(__WXGTK3__) && GTK_CHECK_VERSION(3,10,0)
         wxString labelGTK = GTKConvertMnemonics(wxGetStockLabel(wxID_CANCEL));
-        GtkWidget *btn = gtk_button_new_with_mnemonic(wxGTK_CONV(labelGTK));
+        GtkWidget *btn = gtk_button_new_with_mnemonic(labelGTK.utf8_str());
 #else
         GtkWidget *btn = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 #endif // GTK >= 3.10 / < 3.10
@@ -259,6 +267,13 @@ bool wxButton::DoSetLabelMarkup(const wxString& markup)
 GtkLabel *wxButton::GTKGetLabel() const
 {
     GtkWidget* child = gtk_bin_get_child(GTK_BIN(m_widget));
+#ifdef __WXGTK4__
+    if (GTK_IS_LABEL(child))
+        return GTK_LABEL(child);
+
+    return NULL;
+#else
+    wxGCC_WARNING_SUPPRESS(deprecated-declarations)
     if ( GTK_IS_ALIGNMENT(child) )
     {
         GtkWidget* box = gtk_bin_get_child(GTK_BIN(child));
@@ -274,6 +289,8 @@ GtkLabel *wxButton::GTKGetLabel() const
     }
 
     return GTK_LABEL(child);
+    wxGCC_WARNING_RESTORE()
+#endif
 }
 #endif // wxUSE_MARKUP
 
@@ -283,6 +300,8 @@ void wxButton::DoApplyWidgetStyle(GtkRcStyle *style)
     GtkWidget* child = gtk_bin_get_child(GTK_BIN(m_widget));
     GTKApplyStyle(child, style);
 
+#ifndef __WXGTK4__
+    wxGCC_WARNING_SUPPRESS(deprecated-declarations)
     // for buttons with images, the path to the label is (at least in 2.12)
     // GtkButton -> GtkAlignment -> GtkHBox -> GtkLabel
     if ( GTK_IS_ALIGNMENT(child) )
@@ -297,6 +316,8 @@ void wxButton::DoApplyWidgetStyle(GtkRcStyle *style)
             }
         }
     }
+    wxGCC_WARNING_RESTORE()
+#endif
 }
 
 wxSize wxButton::DoGetBestSize() const

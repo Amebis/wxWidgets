@@ -55,19 +55,6 @@
 using namespace wxMSWImpl;
 
 #if wxUSE_UXTHEME
-    // no need to include tmschema.h
-    #ifndef BP_PUSHBUTTON
-        #define BP_PUSHBUTTON 1
-
-        #define PBS_NORMAL    1
-        #define PBS_HOT       2
-        #define PBS_PRESSED   3
-        #define PBS_DISABLED  4
-        #define PBS_DEFAULTED 5
-
-        #define TMT_CONTENTMARGINS 3602
-    #endif
-
     // provide the necessary declarations ourselves if they're missing from
     // headers
     #ifndef BCM_SETIMAGELIST
@@ -454,7 +441,7 @@ wxSize wxMSWButton::IncreaseToStdSizeAndCache(wxControl *btn, const wxSize& size
         // so make them as high as it.
         int yText;
         wxGetCharSize(GetHwndOf(btn), NULL, &yText, btn->GetFont());
-        yText = EDIT_HEIGHT_FROM_CHAR_HEIGHT(yText);
+        yText = wxGetEditHeightFromCharHeight(yText, btn);
 
         sizeBtn.IncTo(wxSize(-1, yText));
     }
@@ -533,12 +520,12 @@ void wxAnyButton::AdjustForBitmapSize(wxSize &size) const
         int marginH = 0,
             marginV = 0;
 #if wxUSE_UXTHEME
-        if ( wxUxThemeEngine::GetIfActive() )
+        if ( wxUxThemeIsActive() )
         {
             wxUxThemeHandle theme(const_cast<wxAnyButton *>(this), L"BUTTON");
 
             MARGINS margins;
-            wxUxThemeEngine::Get()->GetThemeMargins(theme, NULL,
+            ::GetThemeMargins(theme, NULL,
                                                     BP_PUSHBUTTON,
                                                     PBS_NORMAL,
                                                     TMT_CONTENTMARGINS,
@@ -632,10 +619,7 @@ WXLRESULT wxAnyButton::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lPar
     {
         if (
                 IsEnabled() &&
-                (
-#if wxUSE_UXTHEME
-                wxUxThemeEngine::GetIfActive() ||
-#endif // wxUSE_UXTHEME
+                ( wxUxThemeIsActive() ||
                  (m_imageData && m_imageData->GetBitmap(State_Current).IsOk())
                 )
            )
@@ -696,7 +680,7 @@ void wxAnyButton::DoSetBitmap(const wxBitmap& bitmap, State which)
                       "Must set normal bitmap with the new size first" );
 
 #if wxUSE_UXTHEME
-        if ( ShowsLabel() && wxUxThemeEngine::GetIfActive() )
+        if ( ShowsLabel() && wxUxThemeIsActive() )
         {
             // We can't change the size of the images stored in wxImageList
             // in wxXPButtonImageData::m_iml so force recreating it below but
@@ -716,7 +700,7 @@ void wxAnyButton::DoSetBitmap(const wxBitmap& bitmap, State which)
         // (even if we use BUTTON_IMAGELIST_ALIGN_CENTER alignment and
         // BS_BITMAP style), at least under Windows 2003 so use owner drawn
         // strategy for bitmap-only buttons
-        if ( ShowsLabel() && wxUxThemeEngine::GetIfActive() )
+        if ( ShowsLabel() && wxUxThemeIsActive() )
         {
             m_imageData = new wxXPButtonImageData(this, bitmap);
 
@@ -858,7 +842,13 @@ void DrawButtonText(HDC hdc,
 
     // To get a native look for owner-drawn button in disabled state (without
     // theming) we must use DrawState() to draw the text label.
-    if ( !wxUxThemeEngine::GetIfActive() && !btn->IsEnabled() )
+    //
+    // Notice that we use the enabled state at MSW, not wx, level because we
+    // don't want to grey it out when it's disabled just because its parent is
+    // disabled by MSW as it happens when showing a modal dialog, but we do
+    // want to grey it out if either it or its parent are explicitly disabled
+    // at wx level, see #18011.
+    if ( !wxUxThemeIsActive() && !::IsWindowEnabled(GetHwndOf(btn)) )
     {
         // However using DrawState() has some drawbacks:
         // 1. It generally doesn't support alignment flags (except right
@@ -940,21 +930,51 @@ void DrawButtonText(HDC hdc,
         {
             // draw multiline label
 
-            // center text horizontally in any case
-            flags |= DT_CENTER;
-
             // first we need to compute its bounding rect
             RECT rc;
             ::CopyRect(&rc, pRect);
             ::DrawText(hdc, text.t_str(), text.length(), &rc,
-                       DT_CENTER | DT_CALCRECT);
+                       flags | DT_CALCRECT);
 
-            // now center this rect inside the entire button area
+            // now position this rect inside the entire button area: notice
+            // that DrawText() doesn't respect alignment flags for multiline
+            // text, which is why we have to do it on our own (but still use
+            // the horizontal alignment flags for the individual lines to be
+            // aligned correctly)
             const LONG w = rc.right - rc.left;
             const LONG h = rc.bottom - rc.top;
-            rc.left = pRect->left + (pRect->right - pRect->left)/2 - w/2;
+
+            if ( btn->HasFlag(wxBU_RIGHT) )
+            {
+                rc.left = pRect->right - w;
+
+                flags |= DT_RIGHT;
+            }
+            else if ( !btn->HasFlag(wxBU_LEFT) )
+            {
+                rc.left = pRect->left + (pRect->right - pRect->left)/2 - w/2;
+
+                flags |= DT_CENTER;
+            }
+            else // wxBU_LEFT
+            {
+                rc.left = pRect->left;
+            }
+
+            if ( btn->HasFlag(wxBU_BOTTOM) )
+            {
+                rc.top = pRect->bottom - h;
+            }
+            else if ( !btn->HasFlag(wxBU_TOP) )
+            {
+                rc.top = pRect->top + (pRect->bottom - pRect->top)/2 - h/2;
+            }
+            else // wxBU_TOP
+            {
+                rc.top = pRect->top;
+            }
+
             rc.right = rc.left+w;
-            rc.top = pRect->top + (pRect->bottom - pRect->top)/2 - h/2;
             rc.bottom = rc.top+h;
 
             ::DrawText(hdc, text.t_str(), text.length(), &rc, flags);
@@ -1100,10 +1120,8 @@ void DrawXPBackground(wxAnyButton *button, HDC hdc, RECT& rectBtn, UINT state)
 
     int iState = uxStates[GetButtonState(button, state)];
 
-    wxUxThemeEngine * const engine = wxUxThemeEngine::Get();
-
     // draw parent background if needed
-    if ( engine->IsThemeBackgroundPartiallyTransparent
+    if ( ::IsThemeBackgroundPartiallyTransparent
                  (
                     theme,
                     BP_PUSHBUTTON,
@@ -1121,18 +1139,18 @@ void DrawXPBackground(wxAnyButton *button, HDC hdc, RECT& rectBtn, UINT state)
         // being the perfect solution.
         wxWindowBeingErased = button;
 
-        engine->DrawThemeParentBackground(GetHwndOf(button), hdc, &rectBtn);
+        ::DrawThemeParentBackground(GetHwndOf(button), hdc, &rectBtn);
 
         wxWindowBeingErased = NULL;
     }
 
     // draw background
-    engine->DrawThemeBackground(theme, hdc, BP_PUSHBUTTON, iState,
+    ::DrawThemeBackground(theme, hdc, BP_PUSHBUTTON, iState,
                                 &rectBtn, NULL);
 
     // calculate content area margins
     MARGINS margins;
-    engine->GetThemeMargins(theme, hdc, BP_PUSHBUTTON, iState,
+    ::GetThemeMargins(theme, hdc, BP_PUSHBUTTON, iState,
                             TMT_CONTENTMARGINS, &rectBtn, &margins);
     ::InflateRect(&rectBtn, -margins.cxLeftWidth, -margins.cyTopHeight);
     ::InflateRect(&rectBtn, -XP_BUTTON_EXTRA_MARGIN, -XP_BUTTON_EXTRA_MARGIN);
@@ -1249,7 +1267,7 @@ bool wxAnyButton::MSWOnDraw(WXDRAWITEMSTRUCT *wxdis)
     if ( !HasFlag(wxBORDER_NONE) )
     {
 #if wxUSE_UXTHEME
-        if ( wxUxThemeEngine::GetIfActive() )
+        if ( wxUxThemeIsActive() )
         {
             DrawXPBackground(this, hdc, rectBtn, state);
         }
@@ -1283,7 +1301,7 @@ bool wxAnyButton::MSWOnDraw(WXDRAWITEMSTRUCT *wxdis)
             DrawFocusRect(hdc, &rectBtn);
 
 #if wxUSE_UXTHEME
-            if ( !wxUxThemeEngine::GetIfActive() )
+            if ( !wxUxThemeIsActive() )
 #endif // wxUSE_UXTHEME
             {
                 if ( pushed )

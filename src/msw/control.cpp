@@ -132,27 +132,19 @@ bool wxControl::MSWCreateControl(const wxChar *classname,
     // ... and adjust it to account for a possible parent frames toolbar
     AdjustForParentClientOrigin(x, y);
 
-    m_hWnd = (WXHWND)::CreateWindowEx
-                       (
-                        exstyle,            // extended style
-                        classname,          // the kind of control to create
-                        label.t_str(),      // the window name
-                        style,              // the window style
-                        x, y, w, h,         // the window position and size
-                        GetHwndOf(GetParent()),         // parent
-                        (HMENU)wxUIntToPtr(GetId()),    // child id
-                        wxGetInstance(),    // app instance
-                        NULL                // creation parameters
-                       );
+    m_hWnd = MSWCreateWindowAtAnyPosition
+             (
+              exstyle,            // extended style
+              classname,          // the kind of control to create
+              label.t_str(),      // the window name
+              style,              // the window style
+              x, y, w, h,         // the window position and size
+              GetHwndOf(GetParent()),         // parent
+              GetId()             // child id
+             );
 
     if ( !m_hWnd )
     {
-        wxLogLastError(wxString::Format
-                       (
-                        wxT("CreateWindowEx(\"%s\", flags=%08lx, ex=%08lx)"),
-                        classname, style, exstyle
-                       ));
-
         return false;
     }
 
@@ -410,7 +402,7 @@ wxMSWOwnerDrawnButtonBase::MSWMakeOwnerDrawnIfNecessary(const wxColour& colFg)
 {
     // The only way to change the checkbox foreground colour when using
     // themes is to owner draw it.
-    if ( wxUxThemeEngine::GetIfActive() )
+    if ( wxUxThemeIsActive() )
         MSWMakeOwnerDrawn(colFg.IsOk());
 }
 

@@ -19,6 +19,8 @@
 
 #include "wx/osx/core/cfstring.h"
 #include "wx/osx/core/cfdataref.h"
+#include "wx/osx/core/cfarray.h"
+#include "wx/osx/core/cfdictionary.h"
 
 // platform specific Clang analyzer support
 #ifndef NS_RETURNS_RETAINED
@@ -198,7 +200,7 @@ public :
 protected :
     wxMenu* m_peer;
 
-    wxDECLARE_ABSTRACT_CLASS(wxMenuItemImpl);
+    wxDECLARE_ABSTRACT_CLASS(wxMenuImpl);
 } ;
 #endif
 

@@ -1,4 +1,4 @@
-# Automatically generated from build/files by update_files.py
+# Automatically generated from build/files by build/upmake
 # DO NOT MODIFY MANUALLY !
 
 set(BASE_UNIX_AND_DARWIN_SRC
@@ -127,6 +127,9 @@ set(BASE_COREFOUNDATION_HDR
     wx/osx/core/evtloop.h
     wx/osx/core/objcid.h
     wx/osx/core/private.h
+    wx/osx/core/cfdictionary.h
+    wx/osx/core/cfarray.h
+    wx/osx/core/cftype.h
 )
 
 set(BASE_OSX_SHARED_SRC
@@ -385,7 +388,6 @@ set(BASE_CMN_SRC
     src/common/datetimefmt.cpp
     src/common/datstrm.cpp
     src/common/dircmn.cpp
-    src/common/dynarray.cpp
     src/common/dynlib.cpp
     src/common/dynload.cpp
     src/common/encconv.cpp
@@ -458,6 +460,7 @@ set(BASE_CMN_SRC
     src/common/zstream.cpp
     src/common/fswatchercmn.cpp
     src/generic/fswatcherg.cpp
+    src/common/lzmastream.cpp
 )
 
 set(BASE_AND_GUI_CMN_SRC
@@ -509,6 +512,7 @@ set(BASE_CMN_HDR
     wx/event.h
     wx/eventfilter.h
     wx/evtloop.h
+    wx/evtloopsrc.h
     wx/except.h
     wx/features.h
     wx/flags.h
@@ -632,6 +636,7 @@ set(BASE_CMN_HDR
     wx/meta/removeref.h
     wx/fswatcher.h
     wx/generic/fswatcher.h
+    wx/lzmastream.h
 )
 
 set(NET_UNIX_SRC
@@ -951,7 +956,6 @@ set(GUI_CMN_HDR
     wx/renderer.h
     wx/richmsgdlg.h
     wx/scrolbar.h
-    wx/scrolbar.h
     wx/scrolwin.h
     wx/selstore.h
     wx/settings.h
@@ -1009,7 +1013,6 @@ set(GUI_CMN_HDR
     wx/docmdi.h
     wx/docview.h
     wx/effects.h
-    wx/evtloopsrc.h
     wx/fdrepdlg.h
     wx/filectrl.h
     wx/filehistory.h
@@ -1054,6 +1057,7 @@ set(GUI_CMN_HDR
     wx/paper.h
     wx/persist.h
     wx/persist/bookctrl.h
+    wx/persist/dataview.h
     wx/persist/splitter.h
     wx/persist/toplevel.h
     wx/persist/treebook.h
@@ -1793,7 +1797,6 @@ set(MSW_LOWLEVEL_HDR
     wx/msw/ole/activex.h
     wx/msw/popupwin.h
     wx/msw/uxtheme.h
-    wx/msw/uxthemep.h
     wx/msw/htmlhelp.h
 )
 
@@ -2281,6 +2284,7 @@ set(OSX_SHARED_HDR
     wx/generic/listctrl.h
     wx/generic/prntdlgg.h
     wx/generic/statusbr.h
+    wx/osx/appprogress.h
 )
 
 set(OSX_COCOA_SRC
@@ -3098,6 +3102,16 @@ set(OPENGL_MSW_SRC
 
 set(OPENGL_MSW_HDR
     wx/msw/glcanvas.h
+)
+
+set(OPENGL_GTK_SRC
+    src/gtk/glcanvas.cpp
+    src/unix/glx11.cpp
+)
+
+set(OPENGL_GTK_HDR
+    wx/gtk/glcanvas.h
+    wx/unix/glx11.h
 )
 
 set(OPENGL_OSX_SHARED_SRC

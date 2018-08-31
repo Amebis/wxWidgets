@@ -22,6 +22,11 @@ if(DEFINED wxBUILD_USE_STATIC_RUNTIME AND wxBUILD_USE_STATIC_RUNTIME)
     endforeach()
 endif()
 
+if(wxBUILD_MSVC_MULTIPROC)
+    wx_string_append(CMAKE_C_FLAGS " /MP")
+    wx_string_append(CMAKE_CXX_FLAGS " /MP")
+endif()
+
 if(wxBUILD_COMPATIBILITY VERSION_LESS 3.0)
     set(WXWIN_COMPATIBILITY_2_8 ON)
 endif()
@@ -46,15 +51,17 @@ set(wxARCH_SUFFIX)
 
 # TODO: include compiler version in wxCOMPILER_PREFIX ?
 if(WIN32)
-    if(MSVC)
+    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
         set(wxCOMPILER_PREFIX "vc")
-    elseif(CMAKE_COMPILER_IS_GNUCXX)
+    elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
         set(wxCOMPILER_PREFIX "gcc")
+    elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+        set(wxCOMPILER_PREFIX "clang")
     else()
         message(FATAL_ERROR "Unknown WIN32 compiler type")
     endif()
 
-    if(CMAKE_CL_64)
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
         set(wxARCH_SUFFIX "_x64")
     endif()
 else()
@@ -69,7 +76,7 @@ if(MSVC OR MINGW)
     endif()
 
     if(MSVC)
-        # Include generator expression to supress default Debug/Release pair
+        # Include generator expression to suppress default Debug/Release pair
         set(wxPLATFORM_LIB_DIR "$<1:/>${wxCOMPILER_PREFIX}${wxARCH_SUFFIX}_${lib_suffix}")
     else()
         set(wxPLATFORM_LIB_DIR "/${wxCOMPILER_PREFIX}${wxARCH_SUFFIX}_${lib_suffix}")
@@ -104,7 +111,7 @@ else()
 endif()
 set(wxSETUP_HEADER_FILE ${wxSETUP_HEADER_PATH}/wx/setup.h)
 
-if(NOT wxBUILD_CUSTOM_SETUP_HEADER_PATH AND MSVC)
+if(DEFINED wxSETUP_HEADER_FILE_DEBUG)
     # Append configuration specific suffix to setup header path
     wx_string_append(wxSETUP_HEADER_PATH "$<$<CONFIG:Debug>:d>")
 endif()
@@ -119,18 +126,24 @@ set(wxUSE_STD_DEFAULT ON)
 if(wxUSE_UNICODE)
     set(wxUSE_WCHAR_T ON)
 endif()
-if(wxUSE_EXPAT)
-    set(wxUSE_XML ON)
-else()
-    set(wxUSE_XML OFF)
+if(NOT wxUSE_EXPAT)
+    set(wxUSE_XRC OFF)
 endif()
+set(wxUSE_XML ${wxUSE_XRC})
 if(wxUSE_CONFIG)
     set(wxUSE_CONFIG_NATIVE ON)
 endif()
 
 if(DEFINED wxUSE_OLE AND wxUSE_OLE)
     set(wxUSE_OLE_AUTOMATION ON)
-    set(wxUSE_ACTIVEX ON)
+endif()
+
+if(DEFINED wxUSE_GRAPHICS_DIRECT2D AND NOT wxUSE_GRAPHICS_CONTEXT)
+    set(wxUSE_GRAPHICS_DIRECT2D OFF)
+endif()
+
+if(wxUSE_OPENGL)
+    set(wxUSE_GLCANVAS ON)
 endif()
 
 if(wxUSE_THREADS)
@@ -138,20 +151,9 @@ if(wxUSE_THREADS)
 endif()
 
 if(wxUSE_GUI)
-    # Constants for GUI
-    set(wxUSE_COMMON_DIALOGS ON)
-
-    if(wxUSE_TASKBARICON)
-        set(wxUSE_TASKBARICON_BALLOONS ON)
-    endif()
-
     if(WIN32 AND wxUSE_METAFILE)
         # this one should probably be made separately configurable
         set(wxUSE_ENH_METAFILE ON)
-    endif()
-
-    if(wxUSE_IMAGE)
-        set(wxUSE_WXDIB ON)
     endif()
 
     if(wxUSE_OPENGL)

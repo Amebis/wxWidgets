@@ -14,7 +14,7 @@ dnl ---------------------------------------------------------------------------
 dnl initialization
 dnl ---------------------------------------------------------------------------
 
-AC_INIT([wxWidgets], [3.1.1], [wx-dev@googlegroups.com])
+AC_INIT([wxWidgets], [3.1.2], [wx-dev@googlegroups.com])
 
 dnl the file passed to AC_CONFIG_SRCDIR should be specific to our package
 AC_CONFIG_SRCDIR([wx-config.in])
@@ -40,7 +40,7 @@ dnl wx_release_number += 1
 
 wx_major_version_number=3
 wx_minor_version_number=1
-wx_release_number=1
+wx_release_number=2
 wx_subrelease_number=0
 
 WX_RELEASE=$wx_major_version_number.$wx_minor_version_number
@@ -87,6 +87,7 @@ USE_SYSV=                           dnl any System V
 USE_VMS=
 USE_ULTRIX=
 USE_UNIXWARE=
+USE_HAIKU=
 
 dnl hardware platform
 USE_ALPHA=
@@ -262,7 +263,7 @@ case "${host}" in
     AC_DEFINE(__UNIXWARE__)
   ;;
 
-  *-*-cygwin* | *-*-mingw32* )
+  *-*-cygwin* | *-*-mingw32* | *-*-mingw64* )
     dnl MBN: some of the defines have been moved after toolkit detection
     dnl      because for wxMotif/wxGTK/wxX11 to build on Cygwin
     dnl      USE_UNIX  must be set and not USE_WIN32
@@ -292,6 +293,12 @@ case "${host}" in
     dnl leave USE_UNIX on - BeOS is sufficiently Unix-like for this
     USE_BEOS=1
     AC_DEFINE(__BEOS__)
+  ;;
+
+  *-*-haiku* )
+    USE_HAIKU=1
+    AC_DEFINE(__HAIKU__)
+    DEFAULT_DEFAULT_wxUSE_QT=1
   ;;
 
   *)
@@ -525,14 +532,12 @@ WX_ARG_SYS_WITH(libpng,    [  --with-libpng           use libpng (PNG image form
 WX_ARG_SYS_WITH(libjpeg,   [  --with-libjpeg          use libjpeg (JPEG file format)], wxUSE_LIBJPEG)
 WX_ARG_SYS_WITH(libtiff,   [  --with-libtiff          use libtiff (TIFF file format)], wxUSE_LIBTIFF)
 
-dnl We don't provide built-in versions of these libraries, so if the use of
-dnl system libraries is explicitly disabled, we can't use them at all.
+dnl We don't provide built-in version of this library, so if the use of system
+dnl libraries is explicitly disabled, we can't use it at all.
 if test "$wxUSE_LIBTIFF" = "builtin" ; then
     wxUSE_LIBJBIG=no
-    wxUSE_LIBLZMA=no
 else
     WX_ARG_WITHOUT(libjbig,    [  --without-libjbig       don't use libjbig in libtiff even if available)], wxUSE_LIBJBIG)
-    WX_ARG_WITHOUT(liblzma,    [  --without-liblzma       don't use liblzma in libtiff even if available)], wxUSE_LIBLZMA)
 fi
 
 WX_ARG_SYS_WITH(libxpm,    [  --with-libxpm           use libxpm (XPM file format)], wxUSE_LIBXPM)
@@ -550,6 +555,7 @@ dnl for GUI only
 WX_ARG_WITH(dmalloc,       [  --with-dmalloc          use dmalloc library (http://dmalloc.com/)], wxUSE_DMALLOC)
 WX_ARG_WITH(sdl,           [  --with-sdl              use SDL for audio on Unix], wxUSE_LIBSDL)
 WX_ARG_SYS_WITH(regex,     [  --with-regex            enable support for wxRegEx class], wxUSE_REGEX)
+WX_ARG_WITH(liblzma,       [  --with-liblzma          use LZMA compression)], wxUSE_LIBLZMA)
 WX_ARG_SYS_WITH(zlib,      [  --with-zlib             use zlib for LZW compression], wxUSE_ZLIB)
 WX_ARG_SYS_WITH(expat,     [  --with-expat            enable XML support using expat parser], wxUSE_EXPAT)
 
@@ -633,7 +639,7 @@ dnl ---------------------------------------------------------------------------
 
 WX_ARG_DISABLE(shared,     [  --disable-shared        create static library instead of shared], wxUSE_SHARED)
 AC_ARG_ENABLE(cxx11,       [  --enable-cxx11          use C++11 compiler if available], [wxWITH_CXX=11 wxWITH_CXX_IS_OPTIONAL=1])
-AC_ARG_WITH(cxx,           [  --with-cxx=11|14        use the given C++11], [wxWITH_CXX="$withval"])
+AC_ARG_WITH(cxx,           [  --with-cxx=11|14|17     use the given C++ dialect], [wxWITH_CXX="$withval"])
 WX_ARG_ENABLE(stl,         [  --enable-stl            use standard C++ classes for everything], wxUSE_STL)
 if test "$wxUSE_STL" = "yes"; then
     DEFAULT_wxUSE_STD_CONTAINERS=yes
@@ -1101,8 +1107,14 @@ if test -n "$wxWITH_CXX"; then
             HAVE_CXX11=1
             ;;
 
+        17)
+            dnl This is similar to 14 above.
+            AX_CXX_COMPILE_STDCXX(17)
+            HAVE_CXX11=1
+            ;;
+
         *)
-            AC_MSG_ERROR([Invalid --with-cxx="$wxWITH_CXX" option value, only 11 or 14 supported])
+            AC_MSG_ERROR([Invalid --with-cxx="$wxWITH_CXX" option value, only 11, 14 or 17 supported])
     esac
 
     if test "$HAVE_CXX11" = "1" ; then
@@ -1148,7 +1160,7 @@ if test "x$wxUSE_UNIVERSAL_BINARY" != xno ; then
     if test "x$wxUSE_UNIVERSAL_BINARY" != xyes; then
         OSX_ARCH_OPTS=$wxUSE_UNIVERSAL_BINARY
     else dnl Use all architectures supported
-        OSX_ARCH_OPTS="ppc,i386"
+        OSX_ARCH_OPTS="i386"
         if test "$wxUSE_OSX_COCOA" = 1; then
             OSX_ARCH_OPTS="$OSX_ARCH_OPTS,x86_64"
         fi
@@ -1246,7 +1258,7 @@ dnl We need to quote the next line where we don't need macros and do need [] in 
         MACOSX_SDK_PLIST_VERSION_MIN=`defaults read "$wxUSE_MACOSX_SDK/SDKSettings" buildSettings | grep '^ *"\{0,1\}MACOSX_DEPLOYMENT_TARGET"\{0,1\} *= *"\{0,1\}[^"]*"\{0,1\}; *$' | sed 's/^ *"\{0,1\}MACOSX_DEPLOYMENT_TARGET"\{0,1\} *= *"\{0,1\}\([^"]*\)"\{0,1\} *; *$/\1/'`
 ]
         # If that failed, try again with the new key
-        if test "x$MACOSX_SDK_PLIST_VERSION_MIN" == "x"; then
+        if test "x$MACOSX_SDK_PLIST_VERSION_MIN" = "x"; then
 [
             MACOSX_SDK_PLIST_VERSION_MIN=`defaults read "$wxUSE_MACOSX_SDK/SDKSettings" DefaultProperties | grep '^ *"\{0,1\}MACOSX_DEPLOYMENT_TARGET"\{0,1\} *= *"\{0,1\}[^"]*"\{0,1\}; *$' | sed 's/^ *"\{0,1\}MACOSX_DEPLOYMENT_TARGET"\{0,1\} *= *"\{0,1\}\([^"]*\)"\{0,1\} *; *$/\1/'`
 ]
@@ -1818,8 +1830,17 @@ if test "x$COMPAQCXX" = "xyes"; then
 fi
 
 dnl The checks below are for ancient compilers and are unnecessary when using
-dnl C++11.
-if test "$HAVE_CXX11" != "1" ; then
+dnl C++11, but we still need to define the symbols that would have been defined
+dnl by them if we did run them.
+if test "$HAVE_CXX11" = "1" ; then
+
+AC_DEFINE(HAVE_STD_WSTRING)
+AC_DEFINE(HAVE_STD_STRING_COMPARE)
+AC_DEFINE(HAVE_STD_UNORDERED_MAP)
+AC_DEFINE(HAVE_STD_UNORDERED_SET)
+AC_DEFINE(HAVE_TYPE_TRAITS)
+
+else dnl Not using C++11, so we do need to run the checks.
 
 dnl check for iostream (as opposed to iostream.h) standard header
 WX_CPP_NEW_HEADERS(, AC_DEFINE(wxUSE_IOSTREAMH))
@@ -2541,10 +2562,28 @@ dnl ------------------------------------------------------------------------
 dnl Check for lzma library
 dnl ------------------------------------------------------------------------
 
-LZMA_LINK=
-if test "$wxUSE_LIBLZMA" = "yes"; then
-    AC_CHECK_LIB(lzma, lzma_code, LZMA_LINK=" -llzma")
-else
+if test "$wxUSE_LIBLZMA" != "no"; then
+    AC_CHECK_HEADER(lzma.h,,,[])
+
+    if test "$ac_cv_header_lzma_h" = "yes"; then
+        AC_CHECK_LIB(lzma, lzma_code,
+            [
+                LZMA_LINK="-llzma"
+                LIBS="$LZMA_LINK $LIBS"
+                AC_DEFINE(wxUSE_LIBLZMA)
+            ])
+    fi
+
+    if test -z "$LZMA_LINK"; then
+        wxUSE_LIBLZMA=no
+    fi
+fi
+
+dnl We need to disable the use of lzma in built-in libtiff explicitly, as
+dnl otherwise we'd depend on the system lzma library, which is typically
+dnl undesirable when using builtin libraries. We also disable the use of lzma
+dnl if it's not available anyhow, just to speed up libtiff configure a little.
+if test "$HAVE_LZMA" = "no" -o "$wxUSE_LIBTIFF" = "builtin"; then
     ac_configure_args="$ac_configure_args --disable-lzma"
 fi
 
@@ -2577,7 +2616,7 @@ if test "$wxUSE_LIBTIFF" != "no" ; then
         if test "$wxUSE_ZLIB" = "sys"; then
             TIFF_PREREQ_LINKS="$TIFF_PREREQ_LINKS $ZLIB_LINK"
         fi
-        if test "$wxUSE_LIBLZMA" = "yes"; then
+        if test -n "$LZMA_LINK"; then
             TIFF_PREREQ_LINKS="$TIFF_PREREQ_LINKS $LZMA_LINK"
         fi
         if test "$wxUSE_LIBJBIG" = "yes"; then
@@ -2705,7 +2744,7 @@ if test "$USE_WIN32" = 1 ; then
     ],
     [ ])
 
-    LIBS="$LIBS -lwinspool -lwinmm -lshell32 -lshlwapi -lcomctl32 -lcomdlg32 -ladvapi32 -lversion -lwsock32 -lgdi32"
+    LIBS="$LIBS -luxtheme -lwinspool -lwinmm -lshell32 -lshlwapi -lcomctl32 -lcomdlg32 -ladvapi32 -lversion -lwsock32 -lgdi32"
     case "${host}" in
         x86_64-*-mingw32* )
             dnl we need to define this to embed the manifest for correct
@@ -3329,12 +3368,24 @@ libraries returned by 'pkg-config gtk+-2.0 --libs' or 'gtk-config
 
 
     if test "$wxUSE_QT" = 1; then
-        PKG_CHECK_MODULES(QT5,
+        TOOLKIT=QT
+        GUIDIST=QT_DIST
+        TOOLKIT_DIR="qt"
+
+        if test -n "$QT5_CUSTOM_DIR" ; then
+            dnl the name of the directory where the files for this toolkit live
+            TOOLKIT_INCLUDE="${TOOLKIT_INCLUDE} -I${QT5_CUSTOM_DIR}/include"
+            GUI_TK_LIBRARY="${GUI_TK_LIBRARY} -L${QT5_CUSTOM_DIR}/lib \
+                            -lQt5Core -lQt5Widgets -lQt5Gui -lQt5OpenGL -lQt5Test \
+                            -Wl,-rpath,${QT5_CUSTOM_DIR}/lib"
+
+        elif test -z "$PKG_CONFIG" ; then
+            AC_MSG_ERROR([specify QT5_CUSTOM_DIR or make sure pkg-config is available to search for Qt5 libraries])
+
+        else
+            PKG_CHECK_MODULES(QT5,
                           [Qt5Core Qt5Widgets Qt5Gui Qt5OpenGL Qt5Test],
-            [
-                TOOLKIT=QT
-                GUIDIST=QT_DIST
-                TOOLKIT_DIR="qt"
+                [
                 TOOLKIT_INCLUDE="${TOOLKIT_INCLUDE} ${QT5_CFLAGS}"
                 GUI_TK_LIBRARY="${GUI_TK_LIBRARY} ${QT5_LIBS}"
                 if `pkg-config --variable qt_config Qt5Core | grep "reduce_relocations" >/dev/null`; then
@@ -3342,11 +3393,12 @@ libraries returned by 'pkg-config gtk+-2.0 --libs' or 'gtk-config
                     SAMPLES_CXXFLAGS="-fPIC $SAMPLES_CXXFLAGS"
                     WXCONFIG_CXXFLAGS="-fPIC $WXCONFIG_CXXFLAGS"
                 fi
-            ],
-            [
-                AC_MSG_ERROR([Qt5 libraries are not available])
-            ]
-        )
+                ],
+                [
+                    AC_MSG_ERROR([Qt5 libraries are not available])
+                ]
+            )
+        fi
     fi
     dnl the name of the directory where the files for this toolkit live
     TOOLKIT_DIR=`echo ${TOOLKIT} | tr '[[A-Z]]' '[[a-z]]'`
@@ -3667,7 +3719,7 @@ EOF
         HEADER_PAD_OPTION="-headerpad_max_install_names"
       ;;
 
-      *-*-cygwin* | *-*-mingw32* )
+      *-*-cygwin* | *-*-mingw32* | *-*-mingw64* )
         ;;
 
       *-*-hpux* )
@@ -4438,7 +4490,7 @@ fi
 WX_CHECK_FUNCS(strtok_r, [], [], [#define _REENTRANT])
 
 dnl check for inet_addr and inet_aton (these may live either in libc, or in
-dnl libnsl or libresolv or libsocket)
+dnl libnsl or libresolv or libsocket or libnetwork under Haiku)
 INET_LINK=
 AC_CHECK_FUNCS(inet_addr,
     AC_DEFINE(HAVE_INET_ADDR),
@@ -4450,7 +4502,12 @@ AC_CHECK_FUNCS(inet_addr,
                     INET_LINK="resolv",
                     [
                         AC_CHECK_LIB(socket, inet_addr,
-                            INET_LINK="socket"
+                            INET_LINK="socket",
+                            [
+				AC_CHECK_LIB(network, inet_addr,
+                                   INET_LINK="network"
+                                )
+                            ]
                         )
                     ]
                 )
@@ -4873,15 +4930,6 @@ if test "$TOOLKIT" != "MSW"; then
         fi
       fi
 
-      if test "$wxUSE_COMPILER_TLS" = "auto"; then
-          if test "$USE_NETBSD" = 1; then
-              AC_MSG_WARN([Disabling TLS under NetBSD, please contact wx-dev if it works now])
-              wxUSE_COMPILER_TLS=no
-          else
-              wxUSE_COMPILER_TLS=yes
-          fi
-      fi
-
       if test "$wxUSE_COMPILER_TLS" = "yes"; then
           dnl test for compiler thread-specific variables support
           AC_CACHE_CHECK([for __thread keyword],
@@ -4998,7 +5046,17 @@ dnl AC_CHECK_FUNC(getaddrinfo, AC_DEFINE(HAVE_GETADDRINFO), [
       AX_FUNC_WHICH_GETHOSTBYNAME_R
       if test "x$ac_cv_func_which_gethostbyname_r" = "xno" -o \
               "x$ac_cv_func_which_gethostbyname_r" = "xunknown" ; then
-          AC_CHECK_FUNC(gethostbyname, [ AC_DEFINE(HAVE_GETHOSTBYNAME) ])
+          AC_CHECK_FUNC(gethostbyname, [ AC_DEFINE(HAVE_GETHOSTBYNAME) ],
+              [
+                  dnl Under HaikuOS it is not yet detected
+                  case "${host}" in
+                  *-*-haiku* )
+                    AC_DEFINE(HAVE_GETHOSTBYNAME)
+                    AC_MSG_WARN([Defining HAVE_GETHOSTBYNAME unconditionally under ${host}.])
+                    ;;
+                  esac
+              ]
+           )
       fi
       dnl A similar test for getservbyname_r
       dnl I'm tempted to just not do this test which is taking much time and
@@ -5007,7 +5065,17 @@ dnl AC_CHECK_FUNC(getaddrinfo, AC_DEFINE(HAVE_GETADDRINFO), [
       AC_raf_FUNC_WHICH_GETSERVBYNAME_R
       if test "x$ac_cv_func_which_getservbyname_r" = "xno" -o \
               "x$ac_cv_func_which_getservbyname_r" = "xunknown" ; then
-          AC_CHECK_FUNCS(getservbyname,[ AC_DEFINE(HAVE_GETSERVBYNAME) ])
+          AC_CHECK_FUNCS(getservbyname,[ AC_DEFINE(HAVE_GETSERVBYNAME) ],
+              [
+                  dnl Under HaikuOS it is not yet detected
+                  case "${host}" in
+                  *-*-haiku* )
+                    AC_DEFINE(HAVE_GETSERVBYNAME)
+                    AC_MSG_WARN([Defining HAVE_GETSERVBYNAME unconditionally under ${host}.])
+                    ;;
+                  esac
+              ]
+           )
       fi
       dnl For gethostbyaddr_r, we currently do no separate test, instead, we
       dnl silently assume it's available exactly if gethostbyname_r is
@@ -5374,7 +5442,10 @@ dnl ---------------------------------------------------------------------------
 if test "$wxUSE_SECRETSTORE" = "yes"; then
     dnl The required APIs are always available under MSW and OS X but we must
     dnl have GNOME libsecret under Unix to be able to compile this class.
-    if test "$wxUSE_MSW" != "1" -a "$wxUSE_OSX_COCOA" != 1; then
+    if test "$WXGTK1" = "1"; then
+        AC_MSG_WARN([libsecret is incompatible with GTK+ 1, disabled])
+        wxUSE_SECRETSTORE=no
+    elif test "$wxUSE_MSW" != "1" -a "$wxUSE_OSX_COCOA" != 1; then
         PKG_CHECK_MODULES(LIBSECRET, [libsecret-1],
             [
                 CXXFLAGS="$LIBSECRET_CFLAGS $CXXFLAGS"
@@ -5757,17 +5828,18 @@ if test "$wxUSE_INTL" = "yes" ; then
 fi
 
 if test "$wxUSE_XLOCALE" = "yes" ; then
-    AC_DEFINE(wxUSE_XLOCALE)
+    dnl Some platforms (e.g. macOS) require an extra header, others (Linux)
+    dnl don't, but it's simpler to just check for it under all of them.
+    AC_CHECK_HEADERS([xlocale.h])
 
-    dnl even if xlocale.h exists, it may not contain all that
-    dnl wx needs. check if strtod_l() really is available.
-    AC_CACHE_CHECK([for complete xlocale],
-                   wx_cv_func_strtod_l,
+    AC_CACHE_CHECK([for locale_t], wx_cv_type_locale_t,
     [
         AC_LANG_PUSH(C++)
         AC_TRY_COMPILE(
         [
+        #ifdef HAVE_XLOCALE_H
         #include <xlocale.h>
+        #endif
         #include <locale.h>
         #include <stdlib.h>
         ],
@@ -5775,16 +5847,20 @@ if test "$wxUSE_XLOCALE" = "yes" ; then
         locale_t t;
         strtod_l(NULL, NULL, t);
         ],
-        wx_cv_func_strtod_l=yes,
-        wx_cv_func_strtod_l=no
+        wx_cv_type_locale_t=yes,
+        wx_cv_type_locale_t=no
         )
         AC_LANG_POP()
     ])
 
-    if test "$wx_cv_func_strtod_l" = "yes" ; then
+    if test "$wx_cv_type_locale_t" = "yes" ; then
+        AC_DEFINE(wxUSE_XLOCALE)
+
         dnl We don't test (just) for locale_t existence, but we still define
         dnl this symbol to avoid changing the existing code using it.
         AC_DEFINE(HAVE_LOCALE_T)
+    else
+        AC_MSG_WARN([No locale_t support, wxXLocale won't be available])
     fi
 fi
 
@@ -6030,8 +6106,16 @@ if test "$wxUSE_SOCKETS" = "yes"; then
                         INET_LINK="$INET_LINK -lsocket"
                     fi,
                     [
-                        AC_MSG_WARN([socket library not found - sockets will be disabled])
-                        wxUSE_SOCKETS=no
+                        dnl under Haiku, socket is in libnetwork
+                        AC_CHECK_LIB(network, socket,
+                            if test "$INET_LINK" != " -lnetwork"; then
+                                INET_LINK="$INET_LINK -lnetwork"
+                            fi,
+                            [
+                                AC_MSG_WARN([socket library not found - sockets will be disabled])
+                                wxUSE_SOCKETS=no
+                            ]
+                        )
                     ]
                 )
             ]
@@ -7720,7 +7804,7 @@ if test "$wxUSE_GUI" = "yes"; then
     dnl      library features they need are present)
 
     dnl TODO some samples are never built so far: mfc (requires VC++)
-    SAMPLES_SUBDIRS="$SAMPLES_SUBDIRS artprov dialogs drawing \
+    SAMPLES_SUBDIRS="$SAMPLES_SUBDIRS archive artprov dialogs drawing \
                      erase event exec font image minimal power render \
                      shaped svg taborder vscroll widgets wrapsizer"
 
@@ -7888,6 +7972,13 @@ case "$wxUSE_EXPAT" in
         WXCONFIG_LIBS="$EXPAT_LINK $WXCONFIG_LIBS"
         ;;
 esac
+if test "$wxUSE_LIBLZMA" = "yes"; then
+    dnl It could be already present in WXCONFIG_LIBS as tiff dependency, avoid
+    dnl adding it again in this case:
+    if test "$wxUSE_GUI" != "yes" -o "$wxUSE_LIBTIFF" != "sys"; then
+        WXCONFIG_LIBS="$LZMA_LINK $WXCONFIG_LIBS"
+    fi
+fi
 case "$wxUSE_ZLIB" in
     builtin)
         wxconfig_3rdparty="zlib $wxconfig_3rdparty"
@@ -8369,6 +8460,7 @@ echo "                                       tiff               ${wxUSE_LIBTIFF-
 if test "$wxUSE_X11" = 1 -o "$wxUSE_MOTIF" = 1; then
 echo "                                       xpm                ${wxUSE_LIBXPM-none}"
 fi
+echo "                                       lzma               ${wxUSE_LIBLZMA}"
 echo "                                       zlib               ${wxUSE_ZLIB}"
 echo "                                       expat              ${wxUSE_EXPAT}"
 echo "                                       libmspack          ${wxUSE_LIBMSPACK}"

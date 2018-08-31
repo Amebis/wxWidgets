@@ -15,10 +15,10 @@
 
 #ifndef WX_PRECOMP
     #include "wx/progdlg.h"
-    #include "wx/stdpaths.h"
     #include "wx/wx.h"
 #endif
 
+#include "wx/stdpaths.h"
 #include "wx/taskbarbutton.h"
 
 enum
@@ -98,7 +98,7 @@ wxIcon CreateRandomIcon()
 class MyApp : public wxApp
 {
 public:
-    virtual bool OnInit();
+    virtual bool OnInit() wxOVERRIDE;
 };
 
 class MyFrame : public wxFrame
@@ -429,7 +429,7 @@ void MyFrame::OnRemoveThubmBarButton(wxCommandEvent& WXUNUSED(event))
 
     wxThumbBarButton* button = m_thumbBarButtons.back();
     m_thumbBarButtons.pop_back();
-    MSWGetTaskBarButton()->RemoveThumbBarButton(button);
+    delete MSWGetTaskBarButton()->RemoveThumbBarButton(button);
 }
 
 void MyFrame::OnThumbnailToolbarBtnClicked(wxCommandEvent& event)

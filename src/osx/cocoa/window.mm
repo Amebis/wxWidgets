@@ -769,6 +769,30 @@ void wxWidgetCocoaImpl::SetupMouseEvent( wxMouseEvent &wxevent , NSEvent * nsEve
     }
 }
 
+static void SetDrawingEnabledIfFrozenRecursive(wxWidgetCocoaImpl *impl, bool enable)
+{
+    if (!impl->GetWXPeer())
+        return;
+
+    if (impl->GetWXPeer()->IsFrozen())
+        impl->SetDrawingEnabled(enable);
+
+    for ( wxWindowList::iterator i = impl->GetWXPeer()->GetChildren().begin();
+          i != impl->GetWXPeer()->GetChildren().end();
+          ++i )
+    {
+        wxWindow *child = *i;
+        if ( child->IsTopLevel() || !child->IsFrozen() )
+            continue;
+
+        // Skip any user panes as they'll handle this themselves
+        if ( !child->GetPeer() || child->GetPeer()->IsUserPane() )
+            continue;
+
+        SetDrawingEnabledIfFrozenRecursive((wxWidgetCocoaImpl *)child->GetPeer(), enable);
+    }
+}
+
 @implementation wxNSView
 
 + (void)initialize
@@ -885,6 +909,24 @@ void wxWidgetCocoaImpl::SetupMouseEvent( wxMouseEvent &wxevent , NSEvent * nsEve
         return nil;
 
     return [super hitTest:aPoint];
+}
+
+- (void) viewWillMoveToWindow:(NSWindow *)newWindow
+{
+    wxWidgetCocoaImpl* viewimpl = (wxWidgetCocoaImpl*) wxWidgetImpl::FindFromWXWidget( self );
+    if (viewimpl)
+        SetDrawingEnabledIfFrozenRecursive(viewimpl, true);
+
+    [super viewWillMoveToWindow:newWindow];
+}
+
+- (void) viewDidMoveToWindow
+{
+    wxWidgetCocoaImpl* viewimpl = (wxWidgetCocoaImpl*) wxWidgetImpl::FindFromWXWidget( self );
+    if (viewimpl)
+        SetDrawingEnabledIfFrozenRecursive(viewimpl, false);
+
+    [super viewDidMoveToWindow];
 }
 
 @end // wxNSView
@@ -1646,6 +1688,7 @@ void wxWidgetCocoaImpl::PanGestureEvent(NSPanGestureRecognizer* panGestureRecogn
              gestureState = NSGestureRecognizerStateBegan;
              break;
         case NSGestureRecognizerStateChanged:
+             gestureState = NSGestureRecognizerStateChanged;
              break;
         case NSGestureRecognizerStateEnded:
         case NSGestureRecognizerStateCancelled:
@@ -1698,6 +1741,7 @@ void wxWidgetCocoaImpl::ZoomGestureEvent(NSMagnificationGestureRecognizer* magni
              gestureState = NSGestureRecognizerStateBegan;
              break;
         case NSGestureRecognizerStateChanged:
+             gestureState = NSGestureRecognizerStateChanged;
              break;
         case NSGestureRecognizerStateEnded:
         case NSGestureRecognizerStateCancelled:
@@ -1746,6 +1790,7 @@ void wxWidgetCocoaImpl::RotateGestureEvent(NSRotationGestureRecognizer* rotation
              gestureState = NSGestureRecognizerStateBegan;
              break;
         case NSGestureRecognizerStateChanged:
+             gestureState = NSGestureRecognizerStateChanged;
              break;
         case NSGestureRecognizerStateEnded:
         case NSGestureRecognizerStateCancelled:
@@ -1797,6 +1842,7 @@ void wxWidgetCocoaImpl::LongPressEvent(NSPressGestureRecognizer* pressGestureRec
             gestureState = NSGestureRecognizerStateBegan;
             break;
         case NSGestureRecognizerStateChanged:
+            gestureState = NSGestureRecognizerStateChanged;
             break;
         case NSGestureRecognizerStateEnded:
         case NSGestureRecognizerStateCancelled:
@@ -2245,84 +2291,96 @@ void wxWidgetCocoaImpl::drawRect(void* rect, WXWidget slf, void *WXUNUSED(_cmd))
     wxpeer->GetUpdateRegion() = updateRgn;
 
     // setting up the drawing context
-    
+    // note that starting from 10.14 this may be NULL in certain views
     CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
-    CGContextSaveGState( context );
-    
-#if OSX_DEBUG_DRAWING
-    CGContextBeginPath( context );
-    CGContextMoveToPoint(context, 0, 0);
-    NSRect bounds = [slf bounds];
-    CGContextAddLineToPoint(context, 10, 0);
-    CGContextMoveToPoint(context, 0, 0);
-    CGContextAddLineToPoint(context, 0, 10);
-    CGContextMoveToPoint(context, bounds.size.width, bounds.size.height);
-    CGContextAddLineToPoint(context, bounds.size.width, bounds.size.height-10);
-    CGContextMoveToPoint(context, bounds.size.width, bounds.size.height);
-    CGContextAddLineToPoint(context, bounds.size.width-10, bounds.size.height);
-    CGContextClosePath( context );
-    CGContextStrokePath(context);
-#endif
-    
-    if ( ![slf isFlipped] )
-    {
-        CGContextTranslateCTM( context, 0,  [m_osxView bounds].size.height );
-        CGContextScaleCTM( context, 1, -1 );
-    }
-    
     wxpeer->MacSetCGContextRef( context );
+    if ( context != NULL )
+    {
+        CGContextSaveGState( context );
+        
+#if OSX_DEBUG_DRAWING
+        CGContextBeginPath( context );
+        CGContextMoveToPoint(context, 0, 0);
+        NSRect bounds = [slf bounds];
+        CGContextAddLineToPoint(context, 10, 0);
+        CGContextMoveToPoint(context, 0, 0);
+        CGContextAddLineToPoint(context, 0, 10);
+        CGContextMoveToPoint(context, bounds.size.width, bounds.size.height);
+        CGContextAddLineToPoint(context, bounds.size.width, bounds.size.height-10);
+        CGContextMoveToPoint(context, bounds.size.width, bounds.size.height);
+        CGContextAddLineToPoint(context, bounds.size.width-10, bounds.size.height);
+        CGContextClosePath( context );
+        CGContextStrokePath(context);
+#endif
+        
+        if ( ![slf isFlipped] )
+        {
+            CGContextTranslateCTM( context, 0,  [m_osxView bounds].size.height );
+            CGContextScaleCTM( context, 1, -1 );
+        }
+    }
 
     bool handled = wxpeer->MacDoRedraw( 0 );
-    CGContextRestoreGState( context );
-
-    CGContextSaveGState( context );
+    if ( context != NULL )
+    {
+        CGContextRestoreGState( context );
+        CGContextSaveGState( context );
+    }
+    
     if ( !handled )
     {
         // call super
         SEL _cmd = @selector(drawRect:);
         wxOSX_DrawRectHandlerPtr superimpl = (wxOSX_DrawRectHandlerPtr) [[slf superclass] instanceMethodForSelector:_cmd];
         superimpl(slf, _cmd, *(NSRect*)rect);
-        CGContextRestoreGState( context );
-        CGContextSaveGState( context );
-    }
-    // as we called restore above, we have to flip again if necessary
-    if ( ![slf isFlipped] )
-    {
-        CGContextTranslateCTM( context, 0,  [m_osxView bounds].size.height );
-        CGContextScaleCTM( context, 1, -1 );
-    }
-
-    if ( isTopLevel )
-    {
-        // We also need to explicitly draw the part of the top level window
-        // outside of its region with transparent colour to ensure that it is
-        // really transparent.
-        if ( clearRgn.IsOk() )
+        if ( context != NULL )
         {
-            wxMacCGContextStateSaver saveState(context);
-            wxWindowDC dc(wxpeer);
-            dc.SetBackground(wxBrush(wxTransparentColour));
-            dc.SetDeviceClippingRegion(clearRgn);
-            dc.Clear();
+            CGContextRestoreGState( context );
+            CGContextSaveGState( context );
         }
-
+    }
+    
+    if ( context != NULL )
+    {
+        // as we called restore above, we have to flip again if necessary
+        if ( ![slf isFlipped] )
+        {
+            CGContextTranslateCTM( context, 0,  [m_osxView bounds].size.height );
+            CGContextScaleCTM( context, 1, -1 );
+        }
+        
+        if ( isTopLevel )
+        {
+            // We also need to explicitly draw the part of the top level window
+            // outside of its region with transparent colour to ensure that it is
+            // really transparent.
+            if ( clearRgn.IsOk() )
+            {
+                wxMacCGContextStateSaver saveState(context);
+                wxWindowDC dc(wxpeer);
+                dc.SetBackground(wxBrush(wxTransparentColour));
+                dc.SetDeviceClippingRegion(clearRgn);
+                dc.Clear();
+            }
+            
 #if wxUSE_GRAPHICS_CONTEXT
-        // If the window shape is defined by a path, stroke the path to show
-        // the window border.
-        const wxGraphicsPath& path = tlwParent->GetShapePath();
-        if ( !path.IsNull() )
-        {
-            CGContextSetLineWidth(context, 1);
-            CGContextSetStrokeColorWithColor(context, wxLIGHT_GREY->GetCGColor());
-            CGContextAddPath(context, (CGPathRef) path.GetNativePath());
-            CGContextStrokePath(context);
-        }
+            // If the window shape is defined by a path, stroke the path to show
+            // the window border.
+            const wxGraphicsPath& path = tlwParent->GetShapePath();
+            if ( !path.IsNull() )
+            {
+                CGContextSetLineWidth(context, 1);
+                CGContextSetStrokeColorWithColor(context, wxLIGHT_GREY->GetCGColor());
+                CGContextAddPath(context, (CGPathRef) path.GetNativePath());
+                CGContextStrokePath(context);
+            }
 #endif // wxUSE_GRAPHICS_CONTEXT
+        }
+        
+        wxpeer->MacPaintChildrenBorders();
+        CGContextRestoreGState( context );
     }
-
-    wxpeer->MacPaintChildrenBorders();
     wxpeer->MacSetCGContextRef( NULL );
-    CGContextRestoreGState( context );
 }
 
 void wxWidgetCocoaImpl::controlAction( WXWidget WXUNUSED(slf), void *WXUNUSED(_cmd), void *WXUNUSED(sender))
@@ -2372,7 +2430,7 @@ void wxWidgetCocoaImpl::controlTextDidChange()
 
 #endif
 
-void wxOSXCocoaClassAddWXMethods(Class c)
+void wxOSXCocoaClassAddWXMethods(Class c, wxOSXSkipOverrides skipFlags)
 {
 
 #if OBJC_API_VERSION < 2
@@ -2419,7 +2477,9 @@ void wxOSXCocoaClassAddWXMethods(Class c)
 #if !wxOSX_USE_NATIVE_FLIPPED
     wxOSX_CLASS_ADD_METHOD(c, @selector(isFlipped), (IMP) wxOSX_isFlipped, "c@:" )
 #endif
-    wxOSX_CLASS_ADD_METHOD(c, @selector(drawRect:), (IMP) wxOSX_drawRect, "v@:{_NSRect={_NSPoint=ff}{_NSSize=ff}}" )
+        
+    if ( !(skipFlags & wxOSXSKIP_DRAW) )
+        wxOSX_CLASS_ADD_METHOD(c, @selector(drawRect:), (IMP) wxOSX_drawRect, "v@:{_NSRect={_NSPoint=ff}{_NSSize=ff}}" )
 
     wxOSX_CLASS_ADD_METHOD(c, @selector(controlAction:), (IMP) wxOSX_controlAction, "v@:@" )
     wxOSX_CLASS_ADD_METHOD(c, @selector(controlDoubleAction:), (IMP) wxOSX_controlDoubleAction, "v@:@" )
@@ -2486,7 +2546,7 @@ void wxWidgetCocoaImpl::Init()
 wxWidgetCocoaImpl::~wxWidgetCocoaImpl()
 {
     if ( GetWXPeer() && GetWXPeer()->IsFrozen() )
-        [[m_osxView window] enableFlushWindow];
+        SetDrawingEnabled(true);
     
     RemoveAssociations( this );
 
@@ -3002,8 +3062,6 @@ bool wxWidgetCocoaImpl::SetFocus()
     if ( [m_osxView isKindOfClass:[NSScrollView class] ] )
         targetView = [(NSScrollView*) m_osxView documentView];
 
-    // TODO remove if no issues arise: should not raise the window, only assign focus
-    //[[m_osxView window] makeKeyAndOrderFront:nil] ;
     [[m_osxView window] makeFirstResponder: targetView] ;
     return true;
 }
@@ -3034,6 +3092,10 @@ void wxWidgetCocoaImpl::SetDropTarget(wxDropTarget* target)
 
 void wxWidgetCocoaImpl::RemoveFromParent()
 {
+    // User panes will be thawed in the removeFromSuperview call below
+    if (!IsUserPane() && m_wxPeer->IsFrozen())
+        SetDrawingEnabled(true);
+
     [m_osxView removeFromSuperview];
 }
 
@@ -3043,8 +3105,9 @@ void wxWidgetCocoaImpl::Embed( wxWidgetImpl *parent )
     wxASSERT_MSG( container != NULL , wxT("No valid mac container control") ) ;
     [container addSubview:m_osxView];
     
-    if( m_wxPeer->IsFrozen() )
-        [[m_osxView window] disableFlushWindow];
+    // User panes will be frozen elsewhere
+    if( m_wxPeer->IsFrozen() && !IsUserPane() )
+        SetDrawingEnabled(false);
 }
 
 void wxWidgetCocoaImpl::SetBackgroundColour( const wxColour &col )
@@ -3506,8 +3569,9 @@ bool wxWidgetCocoaImpl::DoHandleCharEvent(NSEvent *event, NSString *text)
 
 bool wxWidgetCocoaImpl::ShouldHandleKeyNavigation(const wxKeyEvent &WXUNUSED(event)) const
 {
-    // Only controls that intercept tabs for different behavior should return false (ie wxTE_PROCESS_TAB)
-    return true;
+    // If the window wants to have all keys, let it have it and don't process
+    // TAB as key navigation event.
+    return !m_wxPeer->HasFlag(wxWANTS_CHARS);
 }
 
 bool wxWidgetCocoaImpl::DoHandleKeyNavigation(const wxKeyEvent &event)
@@ -3693,6 +3757,9 @@ void wxWidgetCocoaImpl::SetFlipped(bool flipped)
 
 void wxWidgetCocoaImpl::SetDrawingEnabled(bool enabled)
 {
+    if ( [m_osxView window] == nil )
+        return;
+
     if ( enabled )
     {
         [[m_osxView window] enableFlushWindow];

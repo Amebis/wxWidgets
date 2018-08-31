@@ -275,6 +275,8 @@
 
 #cmakedefine01 wxUSE_ZLIB
 
+#cmakedefine01 wxUSE_LIBLZMA
+
 #cmakedefine01 wxUSE_APPLE_IEEE
 
 #cmakedefine01 wxUSE_JOYSTICK
@@ -1256,6 +1258,9 @@
 
 /* Define if setpriority() is available. */
 #cmakedefine HAVE_SETPRIORITY 1
+
+/* Define if xlocale.h header file exists. */
+#cmakedefine HAVE_XLOCALE_H 1
 
 /* Define if locale_t is available */
 #cmakedefine HAVE_LOCALE_T 1

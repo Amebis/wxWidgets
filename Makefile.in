@@ -24,6 +24,7 @@ PIC_FLAG = @PIC_FLAG@
 SONAME_FLAG = @SONAME_FLAG@
 STRIP = @STRIP@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_DIR = @INSTALL_DIR@
 ICC_PCH_USE_SWITCH = @ICC_PCH_USE_SWITCH@
@@ -74,8 +75,8 @@ wx_top_builddir = @wx_top_builddir@
 DESTDIR = 
 WX_RELEASE = 3.1
 WX_RELEASE_NODOT = 31
-WX_VERSION = $(WX_RELEASE).1
-WX_VERSION_NODOT = $(WX_RELEASE_NODOT)1
+WX_VERSION = $(WX_RELEASE).2
+WX_VERSION_NODOT = $(WX_RELEASE_NODOT)2
 LIBDIRNAME = $(wx_top_builddir)/lib
 WXREGEX_CFLAGS = -DNDEBUG -D__WX$(TOOLKIT)__ $(__WXUNIV_DEFINE_p) $(____SHARED) \
 	$(CPPFLAGS) $(CFLAGS)
@@ -406,6 +407,7 @@ ALL_BASE_HEADERS =  \
 	wx/event.h \
 	wx/eventfilter.h \
 	wx/evtloop.h \
+	wx/evtloopsrc.h \
 	wx/except.h \
 	wx/features.h \
 	wx/flags.h \
@@ -529,6 +531,7 @@ ALL_BASE_HEADERS =  \
 	wx/fswatcher.h \
 	wx/generic/fswatcher.h \
 	wx/secretstore.h \
+	wx/lzmastream.h \
 	$(BASE_PLATFORM_HDR) \
 	wx/fs_inet.h \
 	wx/protocol/file.h \
@@ -588,6 +591,7 @@ ALL_PORTS_BASE_HEADERS =  \
 	wx/event.h \
 	wx/eventfilter.h \
 	wx/evtloop.h \
+	wx/evtloopsrc.h \
 	wx/except.h \
 	wx/features.h \
 	wx/flags.h \
@@ -711,6 +715,7 @@ ALL_PORTS_BASE_HEADERS =  \
 	wx/fswatcher.h \
 	wx/generic/fswatcher.h \
 	wx/secretstore.h \
+	wx/lzmastream.h \
 	wx/unix/app.h \
 	wx/unix/apptbase.h \
 	wx/unix/apptrait.h \
@@ -776,7 +781,6 @@ ALL_BASE_SOURCES =  \
 	src/common/datetimefmt.cpp \
 	src/common/datstrm.cpp \
 	src/common/dircmn.cpp \
-	src/common/dynarray.cpp \
 	src/common/dynlib.cpp \
 	src/common/dynload.cpp \
 	src/common/encconv.cpp \
@@ -849,6 +853,7 @@ ALL_BASE_SOURCES =  \
 	src/common/fswatchercmn.cpp \
 	src/generic/fswatcherg.cpp \
 	src/common/secretstore.cpp \
+	src/common/lzmastream.cpp \
 	src/common/fdiodispatcher.cpp \
 	src/common/selectdispatcher.cpp \
 	src/unix/appunix.cpp \
@@ -959,7 +964,6 @@ MONODLL_OBJECTS =  \
 	monodll_datetimefmt.o \
 	monodll_datstrm.o \
 	monodll_dircmn.o \
-	monodll_dynarray.o \
 	monodll_dynlib.o \
 	monodll_dynload.o \
 	monodll_encconv.o \
@@ -1032,6 +1036,7 @@ MONODLL_OBJECTS =  \
 	monodll_fswatchercmn.o \
 	monodll_fswatcherg.o \
 	monodll_common_secretstore.o \
+	monodll_lzmastream.o \
 	$(__BASE_PLATFORM_SRC_OBJECTS) \
 	monodll_event.o \
 	monodll_fs_mem.o \
@@ -1101,7 +1106,6 @@ MONOLIB_OBJECTS =  \
 	monolib_datetimefmt.o \
 	monolib_datstrm.o \
 	monolib_dircmn.o \
-	monolib_dynarray.o \
 	monolib_dynlib.o \
 	monolib_dynload.o \
 	monolib_encconv.o \
@@ -1174,6 +1178,7 @@ MONOLIB_OBJECTS =  \
 	monolib_fswatchercmn.o \
 	monolib_fswatcherg.o \
 	monolib_common_secretstore.o \
+	monolib_lzmastream.o \
 	$(__BASE_PLATFORM_SRC_OBJECTS_1) \
 	monolib_event.o \
 	monolib_fs_mem.o \
@@ -1232,7 +1237,6 @@ BASEDLL_OBJECTS =  \
 	basedll_datetimefmt.o \
 	basedll_datstrm.o \
 	basedll_dircmn.o \
-	basedll_dynarray.o \
 	basedll_dynlib.o \
 	basedll_dynload.o \
 	basedll_encconv.o \
@@ -1305,6 +1309,7 @@ BASEDLL_OBJECTS =  \
 	basedll_fswatchercmn.o \
 	basedll_fswatcherg.o \
 	basedll_common_secretstore.o \
+	basedll_lzmastream.o \
 	$(__BASE_PLATFORM_SRC_OBJECTS_2) \
 	basedll_event.o \
 	basedll_fs_mem.o \
@@ -1346,7 +1351,6 @@ BASELIB_OBJECTS =  \
 	baselib_datetimefmt.o \
 	baselib_datstrm.o \
 	baselib_dircmn.o \
-	baselib_dynarray.o \
 	baselib_dynlib.o \
 	baselib_dynload.o \
 	baselib_encconv.o \
@@ -1419,6 +1423,7 @@ BASELIB_OBJECTS =  \
 	baselib_fswatchercmn.o \
 	baselib_fswatcherg.o \
 	baselib_common_secretstore.o \
+	baselib_lzmastream.o \
 	$(__BASE_PLATFORM_SRC_OBJECTS_3) \
 	baselib_event.o \
 	baselib_fs_mem.o \
@@ -2436,6 +2441,9 @@ COND_TOOLKIT_OSX_COCOA_BASE_OSX_HDR =  \
 	wx/osx/core/private.h \
 	wx/osx/core/colour.h \
 	wx/osx/carbon/region.h \
+	wx/osx/core/cfdictionary.h \
+	wx/osx/core/cfarray.h \
+	wx/osx/core/cftype.h \
 	wx/unix/app.h \
 	wx/unix/apptbase.h \
 	wx/unix/apptrait.h \
@@ -2468,7 +2476,10 @@ COND_TOOLKIT_COCOA_BASE_OSX_HDR =  \
 	wx/osx/core/objcid.h \
 	wx/osx/core/private.h \
 	wx/osx/core/colour.h \
-	wx/osx/carbon/region.h
+	wx/osx/carbon/region.h \
+	wx/osx/core/cfdictionary.h \
+	wx/osx/core/cfarray.h \
+	wx/osx/core/cftype.h
 @COND_TOOLKIT_COCOA@BASE_OSX_HDR = $(COND_TOOLKIT_COCOA_BASE_OSX_HDR)
 COND_TOOLKIT_GTK_BASE_OSX_HDR =  \
 	wx/unix/app.h \
@@ -2490,7 +2501,10 @@ COND_TOOLKIT_GTK_BASE_OSX_HDR =  \
 	wx/osx/core/objcid.h \
 	wx/osx/core/private.h \
 	wx/osx/core/colour.h \
-	wx/osx/carbon/region.h
+	wx/osx/carbon/region.h \
+	wx/osx/core/cfdictionary.h \
+	wx/osx/core/cfarray.h \
+	wx/osx/core/cftype.h
 @COND_TOOLKIT_GTK@BASE_OSX_HDR = $(COND_TOOLKIT_GTK_BASE_OSX_HDR)
 COND_TOOLKIT_X11_BASE_OSX_HDR =  \
 	wx/unix/app.h \
@@ -2512,7 +2526,10 @@ COND_TOOLKIT_X11_BASE_OSX_HDR =  \
 	wx/osx/core/objcid.h \
 	wx/osx/core/private.h \
 	wx/osx/core/colour.h \
-	wx/osx/carbon/region.h
+	wx/osx/carbon/region.h \
+	wx/osx/core/cfdictionary.h \
+	wx/osx/core/cfarray.h \
+	wx/osx/core/cftype.h
 @COND_TOOLKIT_X11@BASE_OSX_HDR = $(COND_TOOLKIT_X11_BASE_OSX_HDR)
 COND_TOOLKIT_MOTIF_BASE_OSX_HDR =  \
 	wx/unix/app.h \
@@ -2534,7 +2551,10 @@ COND_TOOLKIT_MOTIF_BASE_OSX_HDR =  \
 	wx/osx/core/objcid.h \
 	wx/osx/core/private.h \
 	wx/osx/core/colour.h \
-	wx/osx/carbon/region.h
+	wx/osx/carbon/region.h \
+	wx/osx/core/cfdictionary.h \
+	wx/osx/core/cfarray.h \
+	wx/osx/core/cftype.h
 @COND_TOOLKIT_MOTIF@BASE_OSX_HDR = $(COND_TOOLKIT_MOTIF_BASE_OSX_HDR)
 COND_TOOLKIT__BASE_OSX_HDR =  \
 	wx/unix/app.h \
@@ -2556,7 +2576,10 @@ COND_TOOLKIT__BASE_OSX_HDR =  \
 	wx/osx/core/objcid.h \
 	wx/osx/core/private.h \
 	wx/osx/core/colour.h \
-	wx/osx/carbon/region.h
+	wx/osx/carbon/region.h \
+	wx/osx/core/cfdictionary.h \
+	wx/osx/core/cfarray.h \
+	wx/osx/core/cftype.h
 @COND_TOOLKIT_@BASE_OSX_HDR = $(COND_TOOLKIT__BASE_OSX_HDR)
 @COND_PLATFORM_MACOSX_1@BASE_PLATFORM_HDR = $(BASE_OSX_HDR)
 COND_PLATFORM_UNIX_1_BASE_PLATFORM_HDR =  \
@@ -2759,7 +2782,6 @@ COND_TOOLKIT_MSW_LOWLEVEL_HDR =  \
 	wx/msw/ole/activex.h \
 	wx/msw/popupwin.h \
 	wx/msw/uxtheme.h \
-	wx/msw/uxthemep.h \
 	wx/msw/htmlhelp.h \
 	wx/msw/helpchm.h \
 	wx/msw/helpwin.h
@@ -3298,6 +3320,7 @@ COND_TOOLKIT_OSX_COCOA_GUI_HDR =  \
 	wx/generic/listctrl.h \
 	wx/generic/prntdlgg.h \
 	wx/generic/statusbr.h \
+	wx/osx/appprogress.h \
 	wx/osx/cocoa/chkconf.h \
 	wx/osx/cocoa/evtloop.h \
 	wx/osx/cocoa/private.h \
@@ -3394,6 +3417,7 @@ COND_TOOLKIT_OSX_IPHONE_GUI_HDR =  \
 	wx/generic/listctrl.h \
 	wx/generic/prntdlgg.h \
 	wx/generic/statusbr.h \
+	wx/osx/appprogress.h \
 	wx/osx/iphone/chkconf.h \
 	wx/osx/iphone/evtloop.h \
 	wx/osx/iphone/private.h \
@@ -3920,7 +3944,6 @@ COND_USE_GUI_1_ALL_GUI_HEADERS =  \
 	wx/docmdi.h \
 	wx/docview.h \
 	wx/effects.h \
-	wx/evtloopsrc.h \
 	wx/fdrepdlg.h \
 	wx/filectrl.h \
 	wx/filehistory.h \
@@ -4454,9 +4477,7 @@ COND_USE_GUI_1___MONOLIB_GUI_SRC_OBJECTS =  \
 	monodll_richtextsymboldlg.o \
 	monodll_richtextxml.o \
 	monodll_xh_richtext.o \
-	monodll_stc.o \
-	monodll_PlatWX.o \
-	monodll_ScintillaWX.o
+	$(__MONOLIB_STC_SRC_OBJECTS)
 @COND_USE_GUI_1@__MONOLIB_GUI_SRC_OBJECTS = $(COND_USE_GUI_1___MONOLIB_GUI_SRC_OBJECTS)
 COND_USE_GUI_1_WXUNIV_0___CORE_SRC_OBJECTS =  \
 	$(__LOWLEVEL_SRC_OBJECTS) \
@@ -6294,6 +6315,8 @@ COND_TOOLKIT_X11___ADVANCED_PLATFORM_SRC_OBJECTS_1 =  \
 @COND_TOOLKIT_GTK_TOOLKIT_VERSION_2@	= monodll_tabartgtk.o
 @COND_TOOLKIT_MSW@__AUI_PLATFORM_SRC_OBJECTS = \
 @COND_TOOLKIT_MSW@	monodll_tabartmsw.o monodll_barartmsw.o
+@COND_USE_STC_1@__MONOLIB_STC_SRC_OBJECTS = monodll_stc.o \
+@COND_USE_STC_1@	monodll_PlatWX.o monodll_ScintillaWX.o
 @COND_PLATFORM_UNIX_1_USE_PLUGINS_0@__PLUGIN_ADV_SRC_OBJECTS \
 @COND_PLATFORM_UNIX_1_USE_PLUGINS_0@	= monodll_sound_sdl.o
 @COND_PLATFORM_WIN32_1@__monodll___win32rc = monodll_version_rc.o
@@ -6537,9 +6560,7 @@ COND_USE_GUI_1___MONOLIB_GUI_SRC_OBJECTS_1 =  \
 	monolib_richtextsymboldlg.o \
 	monolib_richtextxml.o \
 	monolib_xh_richtext.o \
-	monolib_stc.o \
-	monolib_PlatWX.o \
-	monolib_ScintillaWX.o
+	$(__MONOLIB_STC_SRC_OBJECTS_1)
 @COND_USE_GUI_1@__MONOLIB_GUI_SRC_OBJECTS_1 = $(COND_USE_GUI_1___MONOLIB_GUI_SRC_OBJECTS_1)
 COND_USE_GUI_1_WXUNIV_0___CORE_SRC_OBJECTS_1 =  \
 	$(__LOWLEVEL_SRC_OBJECTS_2) \
@@ -8377,6 +8398,8 @@ COND_TOOLKIT_X11___ADVANCED_PLATFORM_SRC_OBJECTS_3 =  \
 @COND_TOOLKIT_GTK_TOOLKIT_VERSION_2@	= monolib_tabartgtk.o
 @COND_TOOLKIT_MSW@__AUI_PLATFORM_SRC_OBJECTS_1 = \
 @COND_TOOLKIT_MSW@	monolib_tabartmsw.o monolib_barartmsw.o
+@COND_USE_STC_1@__MONOLIB_STC_SRC_OBJECTS_1 = monolib_stc.o \
+@COND_USE_STC_1@	monolib_PlatWX.o monolib_ScintillaWX.o
 @COND_PLATFORM_UNIX_1_USE_PLUGINS_0@__PLUGIN_ADV_SRC_OBJECTS_1 \
 @COND_PLATFORM_UNIX_1_USE_PLUGINS_0@	= monolib_sound_sdl.o
 COND_MONOLITHIC_0_SHARED_1___basedll___depname = \
@@ -14207,17 +14230,17 @@ COND_MONOLITHIC_0_SHARED_1_USE_GUI_1_USE_HTML_1___htmldll_library_link_LIBR_0 \
 @COND_USE_EXCEPTIONS_0@__EXCEPTIONS_DEFINE_p_65 = --define wxNO_EXCEPTIONS
 @COND_USE_RTTI_0@__RTTI_DEFINE_p_65 = --define wxNO_RTTI
 @COND_USE_THREADS_0@__THREAD_DEFINE_p_65 = --define wxNO_THREADS
-@COND_PLATFORM_MACOSX_0_USE_SOVERSION_1@dll___targetsuf2 = .$(SO_SUFFIX).1
-@COND_PLATFORM_MACOSX_1_USE_SOVERSION_1@dll___targetsuf2 = .1.$(SO_SUFFIX)
+@COND_PLATFORM_MACOSX_0_USE_SOVERSION_1@dll___targetsuf2 = .$(SO_SUFFIX).2
+@COND_PLATFORM_MACOSX_1_USE_SOVERSION_1@dll___targetsuf2 = .2.$(SO_SUFFIX)
 @COND_USE_SOVERSION_0@dll___targetsuf2 = .$(SO_SUFFIX)
 @COND_PLATFORM_MACOSX_0_USE_SOVERCYGWIN_0_USE_SOVERSION_1@dll___targetsuf3 \
 @COND_PLATFORM_MACOSX_0_USE_SOVERCYGWIN_0_USE_SOVERSION_1@	= \
-@COND_PLATFORM_MACOSX_0_USE_SOVERCYGWIN_0_USE_SOVERSION_1@	.$(SO_SUFFIX).1.0.0
+@COND_PLATFORM_MACOSX_0_USE_SOVERCYGWIN_0_USE_SOVERSION_1@	.$(SO_SUFFIX).2.0.0
 @COND_PLATFORM_MACOSX_1_USE_SOVERSION_1@dll___targetsuf3 \
-@COND_PLATFORM_MACOSX_1_USE_SOVERSION_1@	= .1.0.0.$(SO_SUFFIX)
-@COND_USE_SOVERCYGWIN_1_USE_SOVERSION_1@dll___targetsuf3 = -1.$(SO_SUFFIX)
+@COND_PLATFORM_MACOSX_1_USE_SOVERSION_1@	= .2.0.0.$(SO_SUFFIX)
+@COND_USE_SOVERCYGWIN_1_USE_SOVERSION_1@dll___targetsuf3 = -2.$(SO_SUFFIX)
 @COND_USE_SOVERSION_0@dll___targetsuf3 = .$(SO_SUFFIX)
-@COND_USE_SOVERSION_1_USE_SOVERSOLARIS_1@dll___targetsuf3 = .$(SO_SUFFIX).1
+@COND_USE_SOVERSION_1_USE_SOVERSOLARIS_1@dll___targetsuf3 = .$(SO_SUFFIX).2
 @COND_TOOLKIT_MSW@__RCDEFDIR_p = --include-dir \
 @COND_TOOLKIT_MSW@	$(LIBDIRNAME)/wx/include/$(TOOLCHAIN_FULLNAME)
 @COND_wxUSE_LIBTIFF_builtin@__INC_TIFF_BUILD_p_66 \
@@ -15169,7 +15192,7 @@ samples:
 install-wxconfig: 
 	$(INSTALL_DIR) $(DESTDIR)$(bindir)
 	$(INSTALL_DIR) $(DESTDIR)$(libdir)/wx/config
-	$(INSTALL_PROGRAM) lib/wx/config/$(TOOLCHAIN_FULLNAME) $(DESTDIR)$(libdir)/wx/config
+	$(INSTALL_SCRIPT) lib/wx/config/$(TOOLCHAIN_FULLNAME) $(DESTDIR)$(libdir)/wx/config
 	(cd $(DESTDIR)$(bindir) && rm -f wx-config && $(LN_S) $(libdir)/wx/config/$(TOOLCHAIN_FULLNAME) wx-config || cp -p $(DESTDIR)$(libdir)/wx/config/$(TOOLCHAIN_FULLNAME) wx-config)
 
 locale_install: 
@@ -16049,9 +16072,6 @@ monodll_datstrm.o: $(srcdir)/src/common/datstrm.cpp $(MONODLL_ODEP)
 monodll_dircmn.o: $(srcdir)/src/common/dircmn.cpp $(MONODLL_ODEP)
 	$(CXXC) -c -o $@ $(MONODLL_CXXFLAGS) $(srcdir)/src/common/dircmn.cpp
 
-monodll_dynarray.o: $(srcdir)/src/common/dynarray.cpp $(MONODLL_ODEP)
-	$(CXXC) -c -o $@ $(MONODLL_CXXFLAGS) $(srcdir)/src/common/dynarray.cpp
-
 monodll_dynlib.o: $(srcdir)/src/common/dynlib.cpp $(MONODLL_ODEP)
 	$(CXXC) -c -o $@ $(MONODLL_CXXFLAGS) $(srcdir)/src/common/dynlib.cpp
 
@@ -16267,6 +16287,9 @@ monodll_fswatcherg.o: $(srcdir)/src/generic/fswatcherg.cpp $(MONODLL_ODEP)
 
 monodll_common_secretstore.o: $(srcdir)/src/common/secretstore.cpp $(MONODLL_ODEP)
 	$(CXXC) -c -o $@ $(MONODLL_CXXFLAGS) $(srcdir)/src/common/secretstore.cpp
+
+monodll_lzmastream.o: $(srcdir)/src/common/lzmastream.cpp $(MONODLL_ODEP)
+	$(CXXC) -c -o $@ $(MONODLL_CXXFLAGS) $(srcdir)/src/common/lzmastream.cpp
 
 monodll_unix_mimetype.o: $(srcdir)/src/unix/mimetype.cpp $(MONODLL_ODEP)
 	$(CXXC) -c -o $@ $(MONODLL_CXXFLAGS) $(srcdir)/src/unix/mimetype.cpp
@@ -21308,9 +21331,6 @@ monolib_datstrm.o: $(srcdir)/src/common/datstrm.cpp $(MONOLIB_ODEP)
 monolib_dircmn.o: $(srcdir)/src/common/dircmn.cpp $(MONOLIB_ODEP)
 	$(CXXC) -c -o $@ $(MONOLIB_CXXFLAGS) $(srcdir)/src/common/dircmn.cpp
 
-monolib_dynarray.o: $(srcdir)/src/common/dynarray.cpp $(MONOLIB_ODEP)
-	$(CXXC) -c -o $@ $(MONOLIB_CXXFLAGS) $(srcdir)/src/common/dynarray.cpp
-
 monolib_dynlib.o: $(srcdir)/src/common/dynlib.cpp $(MONOLIB_ODEP)
 	$(CXXC) -c -o $@ $(MONOLIB_CXXFLAGS) $(srcdir)/src/common/dynlib.cpp
 
@@ -21526,6 +21546,9 @@ monolib_fswatcherg.o: $(srcdir)/src/generic/fswatcherg.cpp $(MONOLIB_ODEP)
 
 monolib_common_secretstore.o: $(srcdir)/src/common/secretstore.cpp $(MONOLIB_ODEP)
 	$(CXXC) -c -o $@ $(MONOLIB_CXXFLAGS) $(srcdir)/src/common/secretstore.cpp
+
+monolib_lzmastream.o: $(srcdir)/src/common/lzmastream.cpp $(MONOLIB_ODEP)
+	$(CXXC) -c -o $@ $(MONOLIB_CXXFLAGS) $(srcdir)/src/common/lzmastream.cpp
 
 monolib_unix_mimetype.o: $(srcdir)/src/unix/mimetype.cpp $(MONOLIB_ODEP)
 	$(CXXC) -c -o $@ $(MONOLIB_CXXFLAGS) $(srcdir)/src/unix/mimetype.cpp
@@ -26567,9 +26590,6 @@ basedll_datstrm.o: $(srcdir)/src/common/datstrm.cpp $(BASEDLL_ODEP)
 basedll_dircmn.o: $(srcdir)/src/common/dircmn.cpp $(BASEDLL_ODEP)
 	$(CXXC) -c -o $@ $(BASEDLL_CXXFLAGS) $(srcdir)/src/common/dircmn.cpp
 
-basedll_dynarray.o: $(srcdir)/src/common/dynarray.cpp $(BASEDLL_ODEP)
-	$(CXXC) -c -o $@ $(BASEDLL_CXXFLAGS) $(srcdir)/src/common/dynarray.cpp
-
 basedll_dynlib.o: $(srcdir)/src/common/dynlib.cpp $(BASEDLL_ODEP)
 	$(CXXC) -c -o $@ $(BASEDLL_CXXFLAGS) $(srcdir)/src/common/dynlib.cpp
 
@@ -26785,6 +26805,9 @@ basedll_fswatcherg.o: $(srcdir)/src/generic/fswatcherg.cpp $(BASEDLL_ODEP)
 
 basedll_common_secretstore.o: $(srcdir)/src/common/secretstore.cpp $(BASEDLL_ODEP)
 	$(CXXC) -c -o $@ $(BASEDLL_CXXFLAGS) $(srcdir)/src/common/secretstore.cpp
+
+basedll_lzmastream.o: $(srcdir)/src/common/lzmastream.cpp $(BASEDLL_ODEP)
+	$(CXXC) -c -o $@ $(BASEDLL_CXXFLAGS) $(srcdir)/src/common/lzmastream.cpp
 
 basedll_unix_mimetype.o: $(srcdir)/src/unix/mimetype.cpp $(BASEDLL_ODEP)
 	$(CXXC) -c -o $@ $(BASEDLL_CXXFLAGS) $(srcdir)/src/unix/mimetype.cpp
@@ -27044,9 +27067,6 @@ baselib_datstrm.o: $(srcdir)/src/common/datstrm.cpp $(BASELIB_ODEP)
 baselib_dircmn.o: $(srcdir)/src/common/dircmn.cpp $(BASELIB_ODEP)
 	$(CXXC) -c -o $@ $(BASELIB_CXXFLAGS) $(srcdir)/src/common/dircmn.cpp
 
-baselib_dynarray.o: $(srcdir)/src/common/dynarray.cpp $(BASELIB_ODEP)
-	$(CXXC) -c -o $@ $(BASELIB_CXXFLAGS) $(srcdir)/src/common/dynarray.cpp
-
 baselib_dynlib.o: $(srcdir)/src/common/dynlib.cpp $(BASELIB_ODEP)
 	$(CXXC) -c -o $@ $(BASELIB_CXXFLAGS) $(srcdir)/src/common/dynlib.cpp
 
@@ -27262,6 +27282,9 @@ baselib_fswatcherg.o: $(srcdir)/src/generic/fswatcherg.cpp $(BASELIB_ODEP)
 
 baselib_common_secretstore.o: $(srcdir)/src/common/secretstore.cpp $(BASELIB_ODEP)
 	$(CXXC) -c -o $@ $(BASELIB_CXXFLAGS) $(srcdir)/src/common/secretstore.cpp
+
+baselib_lzmastream.o: $(srcdir)/src/common/lzmastream.cpp $(BASELIB_ODEP)
+	$(CXXC) -c -o $@ $(BASELIB_CXXFLAGS) $(srcdir)/src/common/lzmastream.cpp
 
 baselib_unix_mimetype.o: $(srcdir)/src/unix/mimetype.cpp $(BASELIB_ODEP)
 	$(CXXC) -c -o $@ $(BASELIB_CXXFLAGS) $(srcdir)/src/unix/mimetype.cpp
@@ -37594,7 +37617,6 @@ BASE_DIST: ALL_DIST INTL_DIST
 	mkdir $(DISTDIR)/samples
 	$(CP_P) $(SAMPDIR)/Makefile.in $(DISTDIR)/samples
 	$(CP_P) $(SAMPDIR)/makefile.* $(DISTDIR)/samples
-	$(CP_P) $(SAMPDIR)/Info.plist $(DISTDIR)/samples
 	$(CP_P) $(SAMPDIR)/sample.* $(DISTDIR)/samples
 	$(CP_P) $(SAMPDIR)/samples.* $(DISTDIR)/samples
 
@@ -37821,7 +37843,6 @@ SAMPLES_DIST: ALL_GUI_DIST
 	mkdir $(DISTDIR)/samples
 	$(CP_P) $(SAMPDIR)/Makefile.in $(DISTDIR)/samples
 	$(CP_P) $(SAMPDIR)/makefile.* $(DISTDIR)/samples
-	$(CP_P) $(SAMPDIR)/Info.plist $(DISTDIR)/samples
 	$(CP_P) $(SAMPDIR)/sample.* $(DISTDIR)/samples
 	$(CP_P) $(SAMPDIR)/samples.* $(DISTDIR)/samples
 

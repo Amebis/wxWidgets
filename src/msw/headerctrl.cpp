@@ -195,7 +195,7 @@ wxSize wxHeaderCtrl::DoGetBestSize() const
         return wxControl::DoGetBestSize();
     }
 
-    return wxSize(wpos.cx, wpos.cy);
+    return wxSize(wxDefaultCoord, wpos.cy);
 }
 
 // ----------------------------------------------------------------------------
@@ -313,6 +313,9 @@ void wxHeaderCtrl::DoInsertItem(const wxHeaderColumn& col, unsigned int idx)
     if ( bmp.IsOk() )
     {
         hdi.mask |= HDI_IMAGE;
+
+        if ( HasFlag(wxHD_BITMAP_ON_RIGHT) )
+            hdi.fmt |= HDF_BITMAP_ON_RIGHT;
 
         if ( bmp.IsOk() )
         {

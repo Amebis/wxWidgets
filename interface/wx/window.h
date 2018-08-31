@@ -358,6 +358,7 @@ public:
             Pointer to a parent window.
         @param id
             Window identifier. If wxID_ANY, will automatically create an identifier.
+            See @ref overview_windowids for more information about IDs.
         @param pos
             Window position. wxDefaultPosition indicates that wxWidgets
             should generate a default position for the window.
@@ -948,20 +949,13 @@ public:
     virtual wxSize WindowToClientSize(const wxSize& size) const;
 
     /**
-        Sizes the window so that it fits around its subwindows.
+        Sizes the window to fit its best size.
 
-        This function won't do anything if there are no subwindows and will only really
-        work correctly if sizers are used for the subwindows layout.
+        Using this function is equivalent to setting window size to the return
+        value of GetBestSize().
 
-        Also, if the window has exactly one subwindow it is better (faster and the result
-        is more precise as Fit() adds some margin to account for fuzziness of its calculations)
-        to call:
-
-        @code
-        window->SetClientSize(child->GetSize());
-        @endcode
-
-        instead of calling Fit().
+        Note that, unlike SetSizerAndFit(), this function only changes the
+        current window size and doesn't change its minimal size.
 
         @see @ref overview_windowsizing
     */
@@ -1051,7 +1045,7 @@ public:
     static wxPoint FromDIP(const wxPoint& pt, const wxWindow* w);
 
     /// @overload
-    static wxSize FromDIP(int d, const wxWindow* w);
+    static int FromDIP(int d, const wxWindow* w);
 
 
     /**
@@ -1118,7 +1112,7 @@ public:
     static wxPoint ToDIP(const wxPoint& pt, const wxWindow* w);
 
     /// @overload
-    static wxSize ToDIP(int d, const wxWindow* w);
+    static int ToDIP(int d, const wxWindow* w);
 
     /**
         This functions returns the best acceptable minimal size for the window.
@@ -3336,10 +3330,15 @@ public:
     void SetSizer(wxSizer* sizer, bool deleteOld = true);
 
     /**
-        This method calls SetSizer() and then wxSizer::SetSizeHints which sets the initial
-        window size to the size needed to accommodate all sizer elements and sets the
-        size hints which, if this window is a top level one, prevent the user from
-        resizing it to be less than this minimal size.
+        Associate the sizer with the window and set the window size and minimal
+        size accordingly.
+
+        This method calls SetSizer() and then wxSizer::SetSizeHints() which
+        sets the initial window size to the size needed to accommodate all
+        sizer elements and sets the minimal size to the same size, this
+        preventing the user from resizing this window to be less than this
+        minimal size (if it's a top-level window which can be directly resized
+        by the user).
     */
     void SetSizerAndFit(wxSizer* sizer, bool deleteOld = true);
 
@@ -3827,7 +3826,9 @@ public:
         or panel item label. If @a parent is @NULL, the search will start from all
         top-level frames and dialog boxes; if non-@NULL, the search will be
         limited to the given window hierarchy.
-        The search is recursive in both cases.
+
+        The search is recursive in both cases and, unlike with FindWindow(),
+        recurses into top level child windows too.
 
         @see FindWindow()
 
@@ -3844,10 +3845,14 @@ public:
         and dialog boxes; if non-@NULL, the search will be limited to the given
         window hierarchy.
 
-        The search is recursive in both cases. If no window with such name is found,
-        FindWindowByLabel() is called.
+        The search is recursive in both cases and, unlike FindWindow(),
+        recurses into top level child windows too.
 
-        @see FindWindow()
+        If no window with such name is found, FindWindowByLabel() is called,
+        i.e. the name is interpreted as (internal) name first but if this
+        fails, it's internal as (user-visible) label. As this behaviour may be
+        confusing, it is usually better to use either the FindWindow() overload
+        taking the name or FindWindowByLabel() directly.
 
         @return Window with the given @a name or @NULL if not found.
     */
