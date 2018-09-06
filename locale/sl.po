@@ -3,17 +3,16 @@ msgstr ""
 "Project-Id-Version: wxWidgets 3.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-05-21 14:25+0200\n"
-"PO-Revision-Date: 2017-12-18 14:51+0100\n"
+"PO-Revision-Date: 2018-09-06 09:46+0200\n"
 "Last-Translator: Simon Rozman <simon.rozman@amebis.si>\n"
 "Language-Team: Simon Rozman <simon.rozman@amebis.si>\n"
 "Language: sl_SI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n"
-"%100==4 ? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
-"X-Generator: Poedit 2.0.4\n"
+"X-Generator: Poedit 2.1.1\n"
 
 #: ../src/common/debugrpt.cpp:586
 msgid ""
@@ -1526,9 +1525,7 @@ msgstr "Delovna površina programa"
 #: ../src/generic/logg.cpp:1014
 #, c-format
 msgid "Append log to file '%s' (choosing [No] will overwrite it)?"
-msgstr ""
-"Želite dopisati dnevnik v datoteko »%s« (izbira [Ne] povzroči prepis "
-"datoteke)?"
+msgstr "Želite dopisati dnevnik v datoteko »%s« (izbira [Ne] povzroči prepis datoteke)?"
 
 # generic/dirdlgg.cpp:191
 #: ../src/osx/menu_osx.cpp:577 ../src/osx/menu_osx.cpp:585
@@ -2650,15 +2647,12 @@ msgstr "Stolpec %u"
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:114
 msgid "Command"
-msgstr "Ukazovalka"
+msgstr "Command"
 
 #: ../src/common/init.cpp:196
 #, c-format
-msgid ""
-"Command line argument %d couldn't be converted to Unicode and will be "
-"ignored."
-msgstr ""
-"Argumenta ukazne vrstice %d ni mogoče pretvoriti v Unicode, zato bo prezrt."
+msgid "Command line argument %d couldn't be converted to Unicode and will be ignored."
+msgstr "Argumenta ukazne vrstice %d ni mogoče pretvoriti v Unicode, zato bo prezrt."
 
 #: ../src/msw/fontdlg.cpp:120
 #, c-format
@@ -2666,11 +2660,8 @@ msgid "Common dialog failed with error code %0lx."
 msgstr "Pogovorno okno je spodletelo z napako %0lx."
 
 #: ../src/gtk/window.cpp:4649
-msgid ""
-"Compositing not supported by this system, please enable it in your Window "
-"Manager."
-msgstr ""
-"Sestavljanja ta sistem ne podpira, omogočite ga v svojem upravitelju oken."
+msgid "Compositing not supported by this system, please enable it in your Window Manager."
+msgstr "Sestavljanja ta sistem ne podpira, omogočite ga v svojem upravitelju oken."
 
 #: ../src/html/helpwnd.cpp:1551
 msgid "Compressed HTML Help file (*.chm)|*.chm|"
@@ -2866,9 +2857,7 @@ msgstr "Vzpostavitev asociativnega polja GIF ni možna."
 # common/imagpng.cpp:251
 #: ../src/common/imagpng.cpp:409
 msgid "Couldn't load a PNG image - file is corrupted or not enough memory."
-msgstr ""
-"Slike PNG ni mogoče naložiti - datoteka je pokvarjena ali pa primanjkuje "
-"pomnilnika."
+msgstr "Slike PNG ni mogoče naložiti - datoteka je pokvarjena ali pa primanjkuje pomnilnika."
 
 # common/filefn.cpp:1287
 # msw/dir.cpp:294
@@ -2914,8 +2903,7 @@ msgstr "Niti ni mogoče končati."
 #: ../src/common/xtistrm.cpp:166
 #, c-format
 msgid "Create Parameter %s not found in declared RTTI Parameters"
-msgstr ""
-"V prijavljenih spremenljivkah RTTI ustvarjenega parametra %s ni mogoče najti."
+msgstr "V prijavljenih spremenljivkah RTTI ustvarjenega parametra %s ni mogoče najti."
 
 # generic/dirdlgg.cpp:572
 #: ../src/generic/dirdlgg.cpp:288
@@ -3153,12 +3141,8 @@ msgstr "Razvijalci"
 
 # msw/dialup.cpp:354
 #: ../src/msw/dialup.cpp:374
-msgid ""
-"Dial up functions are unavailable because the remote access service (RAS) is "
-"not installed on this machine. Please install it."
-msgstr ""
-"Funkcije klicne povezave niso na voljo, ker storitev oddaljenega dostopa "
-"(RAS) na tem računalniku ni nameščena. Prosimo, namestite jo."
+msgid "Dial up functions are unavailable because the remote access service (RAS) is not installed on this machine. Please install it."
+msgstr "Funkcije klicne povezave niso na voljo, ker storitev oddaljenega dostopa (RAS) na tem računalniku ni nameščena. Prosimo, namestite jo."
 
 # generic/tipdlg.cpp:177
 #: ../src/generic/tipdlg.cpp:211
@@ -3199,17 +3183,12 @@ msgstr "Mapa ne obstaja."
 
 #: ../src/common/docview.cpp:457
 msgid "Discard changes and reload the last saved version?"
-msgstr ""
-"Želite opustiti spremembe in ponovno naložiti nazadnje shranjeno različico?"
+msgstr "Želite opustiti spremembe in ponovno naložiti nazadnje shranjeno različico?"
 
 # html/helpfrm.cpp:366
 #: ../src/html/helpwnd.cpp:502
-msgid ""
-"Display all index items that contain given substring. Search is case "
-"insensitive."
-msgstr ""
-"Pokaži vse indeksirane predmete, ki vsebujejo podtekst. Iskanje razlikuje "
-"glede na velikost črk."
+msgid "Display all index items that contain given substring. Search is case insensitive."
+msgstr "Pokaži vse indeksirane predmete, ki vsebujejo podtekst. Iskanje razlikuje glede na velikost črk."
 
 # html/helpfrm.cpp:535
 #: ../src/html/helpwnd.cpp:679
@@ -3426,10 +3405,8 @@ msgstr "kuverta Invite, 220 x 220 mm"
 # common/config.cpp:349
 #: ../src/common/config.cpp:469
 #, c-format
-msgid ""
-"Environment variables expansion failed: missing '%c' at position %u in '%s'."
-msgstr ""
-"Razširitev okoljske spremenljivke ni uspela: manjka »%c« na mestu %u v »%s«."
+msgid "Environment variables expansion failed: missing '%c' at position %u in '%s'."
+msgstr "Razširitev okoljske spremenljivke ni uspela: manjka »%c« na mestu %u v »%s«."
 
 # generic/dirdlgg.cpp:268
 # generic/dirdlgg.cpp:286
@@ -3548,10 +3525,8 @@ msgstr "Razpostri"
 
 #: ../src/msw/registry.cpp:1240
 #, c-format
-msgid ""
-"Exporting registry key: file \"%s\" already exists and won't be overwritten."
-msgstr ""
-"Izvoz registrskega ključa: datoteka \"%s\" že obstaja in ne bo prepisana."
+msgid "Exporting registry key: file \"%s\" already exists and won't be overwritten."
+msgstr "Izvoz registrskega ključa: datoteka \"%s\" že obstaja in ne bo prepisana."
 
 #: ../src/common/fmapbase.cpp:195
 msgid "Extended Unix Codepage for Japanese (EUC-JP)"
@@ -3762,9 +3737,7 @@ msgstr "Ključa registra za datoteke '%s' ni mogoče uspešno ustvariti."
 #: ../src/msw/fdrepdlg.cpp:409
 #, c-format
 msgid "Failed to create the standard find/replace dialog (error code %d)"
-msgstr ""
-"Standardnega najdi/zamenjaj pogovornega okna ni bilo uspešno ustvarjeno "
-"(koda napake %d)"
+msgstr "Standardnega najdi/zamenjaj pogovornega okna ni bilo uspešno ustvarjeno (koda napake %d)"
 
 # msw/statbr95.cpp:149
 #: ../src/unix/wakeuppipe.cpp:52
@@ -3889,12 +3862,8 @@ msgid "Failed to install signal handler"
 msgstr "Nameščanje signalne ročice ni bilo uspešno."
 
 #: ../src/unix/threadpsx.cpp:1167
-msgid ""
-"Failed to join a thread, potential memory leak detected - please restart the "
-"program"
-msgstr ""
-"Pridružitev k niti ni uspela, odkrito možno puščanje pomnilnika - prosimo, "
-"ponovno zaženite program"
+msgid "Failed to join a thread, potential memory leak detected - please restart the program"
+msgstr "Pridružitev k niti ni uspela, odkrito možno puščanje pomnilnika - prosimo, ponovno zaženite program"
 
 #: ../src/msw/utils.cpp:629
 #, c-format
@@ -4146,11 +4115,8 @@ msgstr "Preimenovanje vrednosti registra iz '%s' v '%s' ni uspelo."
 
 #: ../src/common/filefn.cpp:1122
 #, c-format
-msgid ""
-"Failed to rename the file '%s' to '%s' because the destination file already "
-"exists."
-msgstr ""
-"Datoteke''%s' ni mogoče preimenovati v '%s', ker ciljna datoteka že obstaja."
+msgid "Failed to rename the file '%s' to '%s' because the destination file already exists."
+msgstr "Datoteke''%s' ni mogoče preimenovati v '%s', ker ciljna datoteka že obstaja."
 
 # msw/registry.cpp:540
 #: ../src/msw/registry.cpp:634
@@ -4509,12 +4475,8 @@ msgid "GIF: not enough memory."
 msgstr "GIF: premalo pomnilnika."
 
 #: ../src/gtk/window.cpp:4631
-msgid ""
-"GTK+ installed on this machine is too old to support screen compositing, "
-"please install GTK+ 2.12 or later."
-msgstr ""
-"GTK+, nameščen na tem računalniku, je prestar, da bi podpiral zaslonsko "
-"skladanje, namestiti morate GTK+ 2.12 ali novejšega."
+msgid "GTK+ installed on this machine is too old to support screen compositing, please install GTK+ 2.12 or later."
+msgstr "GTK+, nameščen na tem računalniku, je prestar, da bi podpiral zaslonsko skladanje, namestiti morate GTK+ 2.12 ali novejšega."
 
 #: ../src/univ/themes/gtk.cpp:525
 msgid "GTK+ theme"
@@ -4782,11 +4744,8 @@ msgid "ISO-2022-JP"
 msgstr "ISO-2022-JP"
 
 #: ../src/html/htmprint.cpp:282
-msgid ""
-"If possible, try changing the layout parameters to make the printout more "
-"narrow."
-msgstr ""
-"Če je mogoče, poskusite spremeniti parametre postavitve, da bo izpis ožji."
+msgid "If possible, try changing the layout parameters to make the printout more narrow."
+msgstr "Če je mogoče, poskusite spremeniti parametre postavitve, da bo izpis ožji."
 
 #: ../src/generic/dbgrptg.cpp:358
 msgid ""
@@ -4798,13 +4757,11 @@ msgstr ""
 
 #: ../src/generic/dbgrptg.cpp:324
 msgid ""
-"If you wish to suppress this debug report completely, please choose the "
-"\"Cancel\" button,\n"
+"If you wish to suppress this debug report completely, please choose the \"Cancel\" button,\n"
 "but be warned that it may hinder improving the program, so if\n"
 "at all possible please do continue with the report generation.\n"
 msgstr ""
-"Če želite popolnoma preprečiti to poročilo o razhroščevanju, prosimo, "
-"izberite gumb \"Razveljavi\",\n"
+"Če želite popolnoma preprečiti to poročilo o razhroščevanju, prosimo, izberite gumb \"Razveljavi\",\n"
 "vendar vedite, da to lahko onemogoča izboljšanje programa, tako da če je\n"
 "le mogoče, prosimo, nadaljujte s tvorbo poročila.\n"
 
@@ -4852,13 +4809,8 @@ msgstr "Slika ni vrste %s."
 
 # msw/textctrl.cpp:219
 #: ../src/msw/textctrl.cpp:488
-msgid ""
-"Impossible to create a rich edit control, using simple text control instead. "
-"Please reinstall riched32.dll"
-msgstr ""
-"Kontrolnika za bogato urejanje ni mogoče ustvariti, namesto tega bo "
-"uporabljen kontrolnik za enostavno urejanje besedila. Prosimo, ponovno "
-"namestite riched32.dll"
+msgid "Impossible to create a rich edit control, using simple text control instead. Please reinstall riched32.dll"
+msgstr "Kontrolnika za bogato urejanje ni mogoče ustvariti, namesto tega bo uporabljen kontrolnik za enostavno urejanje besedila. Prosimo, ponovno namestite riched32.dll"
 
 #: ../src/unix/utilsunx.cpp:301
 msgid "Impossible to get child process input"
@@ -5027,8 +4979,7 @@ msgstr "Neveljaven pravilni izraz '%s': %s"
 #: ../src/common/config.cpp:226
 #, c-format
 msgid "Invalid value %ld for a boolean key \"%s\" in config file."
-msgstr ""
-"Neveljavna vrednost %ld za logični ključ »%s« v prilagoditveni datoteki."
+msgstr "Neveljavna vrednost %ld za logični ključ »%s« v prilagoditveni datoteki."
 
 # generic/fontdlgg.cpp:213
 #: ../src/generic/fontdlgg.cpp:329 ../src/richtext/richtextfontpage.cpp:351
@@ -5448,12 +5399,8 @@ msgid "MDI child"
 msgstr "Otrok MDI"
 
 #: ../src/msw/helpchm.cpp:56
-msgid ""
-"MS HTML Help functions are unavailable because the MS HTML Help library is "
-"not installed on this machine. Please install it."
-msgstr ""
-"Funkcije MS HTML Help niso na voljo, ker knjižnica MS HTML Help ni nameščena "
-"na tem računalniku. Prosimo, namestite jo."
+msgid "MS HTML Help functions are unavailable because the MS HTML Help library is not installed on this machine. Please install it."
+msgstr "Funkcije MS HTML Help niso na voljo, ker knjižnica MS HTML Help ni nameščena na tem računalniku. Prosimo, namestite jo."
 
 #: ../src/univ/themes/win32.cpp:3754
 msgid "Ma&ximize"
@@ -5850,8 +5797,7 @@ msgstr "Vnosa ni mogoče najti."
 msgid ""
 "No font for displaying text in encoding '%s' found,\n"
 "but an alternative encoding '%s' is available.\n"
-"Do you want to use this encoding (otherwise you will have to choose another "
-"one)?"
+"Do you want to use this encoding (otherwise you will have to choose another one)?"
 msgstr ""
 "Nobena pisava za prikaz besedila, kodiranega v '%s', ne obstaja,\n"
 "na voljo pa je drugaćno kodiranje '%s'.\n"
@@ -6519,8 +6465,7 @@ msgstr "Prosimo, izberite stran za prikaz:"
 # msw/dialup.cpp:768
 #: ../src/msw/dialup.cpp:764
 msgid "Please choose which ISP do you want to connect to"
-msgstr ""
-"Prosimo, izberite ponudnika spletnih storitev, s katerim se želite povezati."
+msgstr "Prosimo, izberite ponudnika spletnih storitev, s katerim se želite povezati."
 
 #: ../src/common/headerctrlcmn.cpp:59
 msgid "Please select the columns to show and define their order:"
@@ -6742,11 +6687,8 @@ msgstr "Izpis"
 
 #: ../src/common/debugrpt.cpp:560
 #, c-format
-msgid ""
-"Processing debug report has failed, leaving the files in \"%s\" directory."
-msgstr ""
-"Obdelava poročila o razhroščevanju ni uspela, datoteke so ostale v mapi \"%s"
-"\"."
+msgid "Processing debug report has failed, leaving the files in \"%s\" directory."
+msgstr "Obdelava poročila o razhroščevanju ni uspela, datoteke so ostale v mapi \"%s\"."
 
 #: ../src/common/prntbase.cpp:545
 msgid "Progress:"
@@ -6927,9 +6869,7 @@ msgstr "Odstrani trenutno stran iz zaznamkov"
 #: ../src/common/rendcmn.cpp:194
 #, c-format
 msgid "Renderer \"%s\" has incompatible version %d.%d and couldn't be loaded."
-msgstr ""
-"Prikazovalnik \"%s\" je nezdružljive različice %d.%d in ga ni mogoče "
-"naložiti."
+msgstr "Prikazovalnik \"%s\" je nezdružljive različice %d.%d in ga ni mogoče naložiti."
 
 #: ../src/richtext/richtextbuffer.cpp:4527
 msgid "Renumber List"
@@ -7128,11 +7068,8 @@ msgstr "Iskanje"
 
 # html/helpfrm.cpp:416
 #: ../src/html/helpwnd.cpp:537
-msgid ""
-"Search contents of help book(s) for all occurrences of the text you typed "
-"above"
-msgstr ""
-"Iskanje v knjigah s pomočjo za vse pojavitve zgoraj natipkanega besedila"
+msgid "Search contents of help book(s) for all occurrences of the text you typed above"
+msgstr "Iskanje v knjigah s pomočjo za vse pojavitve zgoraj natipkanega besedila"
 
 # generic/dirdlgg.cpp:572
 #: ../src/generic/fdrepdlg.cpp:160
@@ -7257,8 +7194,7 @@ msgstr "Nastavitve ..."
 # msw/dialup.cpp:539
 #: ../src/msw/dialup.cpp:544
 msgid "Several active dialup connections found, choosing one randomly."
-msgstr ""
-"Najdenih je več aktivnih klicnih povezav, izbrana bo naključna med njimi."
+msgstr "Najdenih je več aktivnih klicnih povezav, izbrana bo naključna med njimi."
 
 #: ../src/richtext/richtextbackgroundpage.cpp:271
 msgid "Sh&adow spread:"
@@ -7751,8 +7687,7 @@ msgstr ""
 #: ../src/html/htmprint.cpp:271
 #, c-format
 msgid ""
-"The document \"%s\" doesn't fit on the page horizontally and will be "
-"truncated if printed.\n"
+"The document \"%s\" doesn't fit on the page horizontally and will be truncated if printed.\n"
 "\n"
 "Would you like to proceed with printing it nevertheless?"
 msgstr ""
@@ -7929,12 +7864,10 @@ msgstr "Prikazano območje."
 
 #: ../src/generic/dbgrptg.cpp:322
 msgid ""
-"The report contains the files listed below. If any of these files contain "
-"private information,\n"
+"The report contains the files listed below. If any of these files contain private information,\n"
 "please uncheck them and they will be removed from the report.\n"
 msgstr ""
-"Poročilo vsebuje datoteke, navedene spodaj. Če katere od teh datotek "
-"vsebujejo zasebne podatke,\n"
+"Poročilo vsebuje datoteke, navedene spodaj. Če katere od teh datotek vsebujejo zasebne podatke,\n"
 "jih, prosimo, odznačite in odstranjene bodo iz poročila.\n"
 
 # common/cmdline.cpp:761
@@ -8069,13 +8002,8 @@ msgstr "Vrednost polmera koda."
 
 #: ../src/msw/dialup.cpp:433
 #, c-format
-msgid ""
-"The version of remote access service (RAS) installed on this machine is too "
-"old, please upgrade (the following required function is missing: %s)."
-msgstr ""
-"Različica storitve oddaljenega dostopa (RAS), nameščena na tem računalniku, "
-"je zastarela, prosimo, nadgradite jo (manjka naslednja zahtevana funkcija: "
-"%s)."
+msgid "The version of remote access service (RAS) installed on this machine is too old, please upgrade (the following required function is missing: %s)."
+msgstr "Različica storitve oddaljenega dostopa (RAS), nameščena na tem računalniku, je zastarela, prosimo, nadgradite jo (manjka naslednja zahtevana funkcija: %s)."
 
 # generic/printps.cpp:209
 # msw/printwin.cpp:252
@@ -8085,16 +8013,11 @@ msgid "The vertical offset."
 msgstr "Navpični odmik."
 
 #: ../src/richtext/richtextprint.cpp:619 ../src/html/htmprint.cpp:745
-msgid ""
-"There was a problem during page setup: you may need to set a default printer."
-msgstr ""
-"Med pripravo strani je prišlo do težave: morda morate nastaviti privzeti "
-"tiskalnik."
+msgid "There was a problem during page setup: you may need to set a default printer."
+msgstr "Med pripravo strani je prišlo do težave: morda morate nastaviti privzeti tiskalnik."
 
 #: ../src/html/htmprint.cpp:255
-msgid ""
-"This document doesn't fit on the page horizontally and will be truncated "
-"when it is printed."
+msgid "This document doesn't fit on the page horizontally and will be truncated when it is printed."
 msgstr "Ta dokument je vodoravno prevelik za stran in bo pri tiskanju porezan."
 
 # common/imagpcx.cpp:434
@@ -8108,21 +8031,13 @@ msgid "This platform does not support background transparency."
 msgstr "Ta platforma ne podpira prosojnosti ozadja."
 
 #: ../src/gtk/window.cpp:4660
-msgid ""
-"This program was compiled with a too old version of GTK+, please rebuild "
-"with GTK+ 2.12 or newer."
-msgstr ""
-"Program je bil preveden z zastarelo različico GTK+, ponovno ga zgradite z GTK"
-"+ 2.12 ali novejšim."
+msgid "This program was compiled with a too old version of GTK+, please rebuild with GTK+ 2.12 or newer."
+msgstr "Program je bil preveden z zastarelo različico GTK+, ponovno ga zgradite z GTK+ 2.12 ali novejšim."
 
 # msw/thread.cpp:1083
 #: ../src/msw/thread.cpp:1240
-msgid ""
-"Thread module initialization failed: cannot store value in thread local "
-"storage"
-msgstr ""
-"Vzpostavitev modula niti ni uspela: vrednosti ni mogoče shraniti v lokalni "
-"shrambi niti"
+msgid "Thread module initialization failed: cannot store value in thread local storage"
+msgstr "Vzpostavitev modula niti ni uspela: vrednosti ni mogoče shraniti v lokalni shrambi niti"
 
 #: ../src/unix/threadpsx.cpp:1794
 msgid "Thread module initialization failed: failed to create thread key"
@@ -8130,12 +8045,8 @@ msgstr "Vzpostavitev modula niti ni uspela: ključa niti ni mogoče ustvariti"
 
 # msw/thread.cpp:1071
 #: ../src/msw/thread.cpp:1228
-msgid ""
-"Thread module initialization failed: impossible to allocate index in thread "
-"local storage"
-msgstr ""
-"Vzpostavitev modula niti ni uspela: v lokalni shrambi niti ni mogoče "
-"dodeliti indeksa"
+msgid "Thread module initialization failed: impossible to allocate index in thread local storage"
+msgstr "Vzpostavitev modula niti ni uspela: v lokalni shrambi niti ni mogoče dodeliti indeksa"
 
 #: ../src/unix/threadpsx.cpp:1043
 msgid "Thread priority setting is ignored."
@@ -8153,9 +8064,7 @@ msgstr "Razporedi &navpično"
 
 #: ../src/common/ftp.cpp:200
 msgid "Timeout while waiting for FTP server to connect, try passive mode."
-msgstr ""
-"Časovna prekoračitev pri čakanju na strežnik FTP za povezavo, poskusite "
-"pasiven način."
+msgstr "Časovna prekoračitev pri čakanju na strežnik FTP za povezavo, poskusite pasiven način."
 
 # generic/tipdlg.cpp:162
 #: ../src/generic/tipdlg.cpp:201
@@ -8214,8 +8123,7 @@ msgstr "Resnično"
 #: ../src/common/fs_mem.cpp:227
 #, c-format
 msgid "Trying to remove file '%s' from memory VFS, but it is not loaded!"
-msgstr ""
-"Poskus odstanitve datoteke '%s' iz pomnilniškega VFS, vendar ni naložena!"
+msgstr "Poskus odstanitve datoteke '%s' iz pomnilniškega VFS, vendar ni naložena!"
 
 #: ../src/common/fmapbase.cpp:156
 msgid "Turkish (ISO-8859-9)"
@@ -8247,12 +8155,8 @@ msgstr "Tip mora imeti pretvorbo enum - long"
 
 #: ../src/propgrid/propgridiface.cpp:401
 #, c-format
-msgid ""
-"Type operation \"%s\" failed: Property labeled \"%s\" is of type \"%s\", NOT "
-"\"%s\"."
-msgstr ""
-"Operacija »%s« je spodletela: lastnost z oznako »%s« je vrste »%s« in NE "
-"»%s«."
+msgid "Type operation \"%s\" failed: Property labeled \"%s\" is of type \"%s\", NOT \"%s\"."
+msgstr "Operacija »%s« je spodletela: lastnost z oznako »%s« je vrste »%s« in NE »%s«."
 
 #: ../src/common/paper.cpp:133
 msgid "US Std Fanfold, 14 7/8 x 11 in"
@@ -8327,8 +8231,7 @@ msgstr "Ni mogoče pridobiti dogodkov iz kqueue"
 
 #: ../src/gtk/app.cpp:435
 msgid "Unable to initialize GTK+, is DISPLAY set properly?"
-msgstr ""
-"GTK+ ni mogoče vzpostaviti. Je spremenljivka DISPLAY nastavljena pravilno?"
+msgstr "GTK+ ni mogoče vzpostaviti. Je spremenljivka DISPLAY nastavljena pravilno?"
 
 # generic/dirdlgg.cpp:550
 #: ../include/wx/unix/private/fswatcher_kqueue.h:57
@@ -8409,8 +8312,7 @@ msgstr "Parametru '%s' sledijo nepričakovani znaki."
 #: ../src/unix/fswatcher_inotify.cpp:274
 #, c-format
 msgid "Unexpected event for \"%s\": no matching watch descriptor."
-msgstr ""
-"Nepričakovan dogodek za »%s«: ni ujemajočega opazovalnega deskriptorja."
+msgstr "Nepričakovan dogodek za »%s«: ni ujemajočega opazovalnega deskriptorja."
 
 # common/cmdline.cpp:712
 #: ../src/common/cmdline.cpp:1195
@@ -9043,8 +8945,7 @@ msgstr "Ne morete dodati nove mape v ta del."
 
 #: ../src/propgrid/propgrid.cpp:3299
 msgid "You have entered invalid value. Press ESC to cancel editing."
-msgstr ""
-"Vnesli ste neveljavno vrednost. Pritisnite ubežnico za preklic urejanja."
+msgstr "Vnesli ste neveljavno vrednost. Pritisnite ubežnico za preklic urejanja."
 
 #: ../src/common/stockitem.cpp:209
 msgid "Zoom &In"
@@ -9078,8 +8979,7 @@ msgstr "Program DDEML je ustvaril podaljšano stanje sledenja."
 # msw/dde.cpp:985
 #: ../src/msw/dde.cpp:1129
 msgid ""
-"a DDEML function was called without first calling the DdeInitialize "
-"function,\n"
+"a DDEML function was called without first calling the DdeInitialize function,\n"
 "or an invalid instance identifier\n"
 "was passed to a DDEML function."
 msgstr ""
@@ -9265,8 +9165,7 @@ msgstr "ni mogoče uzbrisati uporabniške datoteke '%s'"
 #: ../src/common/file.cpp:495
 #, c-format
 msgid "can't determine if the end of file is reached on descriptor %d"
-msgstr ""
-"ni mogoče ugotoviti, ali je bil konec datoteke na deskriptorju %d dosežen"
+msgstr "ni mogoče ugotoviti, ali je bil konec datoteke na deskriptorju %d dosežen"
 
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
@@ -9560,8 +9459,7 @@ msgstr "datoteka »%s«, vrstica %zu: ključ »%s« je bil že najden v vrstici 
 #: ../src/common/fileconf.cpp:621
 #, c-format
 msgid "file '%s', line %zu: value for immutable key '%s' ignored."
-msgstr ""
-"datoteka »%s«, vrstica %zu: vrednost nespremenljivega ključa »%s« ignorirana."
+msgstr "datoteka »%s«, vrstica %zu: vrednost nespremenljivega ključa »%s« ignorirana."
 
 # common/fileconf.cpp:449
 #: ../src/common/fileconf.cpp:543
@@ -10102,3 +10000,667 @@ msgstr "napaka zlib %d"
 #: ../src/richtext/richtextbulletspage.cpp:288
 msgid "~"
 msgstr "~"
+
+# common/valtext.cpp:140
+#~ msgid "'%s' is invalid"
+#~ msgstr "'%s' je neveljaven"
+
+#~ msgid "Bitmap renderer cannot render value; value type: "
+#~ msgstr "Upodobitelj bitnih slik ne more upodobiti vrednosti; vrsta vrednosti: "
+
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+# msw/thread.cpp:519
+#~ msgid "Cannot create mutex."
+#~ msgstr "Mutexa ni mogoče ustvariti."
+
+#~ msgid "Cannot create new column's ID. Probably max. number of columns reached."
+#~ msgstr "ID novega stolpca ni mogoče ustvariti. Najbrž je že doseženo največje število stolpcev."
+
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+# msw/thread.cpp:519
+#~ msgid "Cannot resume thread %lu"
+#~ msgstr "Niti %lu ni mogoče nadaljevati."
+
+#~ msgid "Cannot suspend thread %lu"
+#~ msgstr "Niti %lu ni mogoče začasno ustaviti."
+
+# common/textcmn.cpp:94
+#~ msgid "Column could not be added."
+#~ msgstr "Stolpca ni mogoče dodati."
+
+#~ msgid "Column description could not be initialized."
+#~ msgstr "Opisa stolpca ni mogoče vzpostaviti."
+
+# common/intl.cpp:374
+#~ msgid "Column index not found."
+#~ msgstr "Kazala stoplca ni mogoče najti."
+
+#~ msgid "Column width could not be determined"
+#~ msgstr "Širine stolpca ni mogoče ugotoviti"
+
+#~ msgid "Column width could not be set."
+#~ msgstr "Širine stolpca ni mogoče nastaviti."
+
+#~ msgid "Confirm registry update"
+#~ msgstr "Potrdite osvežitev registra"
+
+# common/prntbase.cpp:711
+#~ msgid "Could not determine column index."
+#~ msgstr "Kazala stolpca ni mogoče določiti."
+
+#~ msgid "Could not determine column's position"
+#~ msgstr "Položaja stolpca ni mogoče ugotoviti"
+
+# msw/dib.cpp:434
+#~ msgid "Could not determine number of columns."
+#~ msgstr "Števila stolpcev ni mogoče določiti."
+
+# msw/dib.cpp:434
+#~ msgid "Could not determine number of items"
+#~ msgstr "Števila elementov ni mogoče določiti."
+
+# generic/printps.cpp:209
+# msw/printwin.cpp:252
+#~ msgid "Could not get header description."
+#~ msgstr "Opisa glave ni mogoče pridobiti."
+
+# msw/dib.cpp:434
+#~ msgid "Could not get items."
+#~ msgstr "Elementov ni mogoče pridobiti."
+
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+# common/file.cpp:580
+# common/file.cpp:583
+#~ msgid "Could not get property flags."
+#~ msgstr "Zastavic lastnosti ni mogoče pridobiti."
+
+# msw/dib.cpp:434
+#~ msgid "Could not get selected items."
+#~ msgstr "Izbranih elementov ni mogoče pridobiti."
+
+# common/imagbmp.cpp:266
+# common/imagbmp.cpp:278
+#~ msgid "Could not remove column."
+#~ msgstr "Stolpca ni mogoče odstraniti."
+
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+# common/file.cpp:580
+# common/file.cpp:583
+#~ msgid "Could not retrieve number of items"
+#~ msgstr "Števila elementov ni mogoče pridobiti"
+
+# generic/printps.cpp:209
+# msw/printwin.cpp:252
+#~ msgid "Could not set alignment."
+#~ msgstr "Poravnave ni mogoče določiti."
+
+# common/prntbase.cpp:711
+#~ msgid "Could not set column width."
+#~ msgstr "Širine stolpca ni mogoče določiti."
+
+# generic/printps.cpp:209
+# msw/printwin.cpp:252
+#~ msgid "Could not set header description."
+#~ msgstr "Opisa glave ni mogoče nastaviti."
+
+# generic/printps.cpp:209
+# msw/printwin.cpp:252
+#~ msgid "Could not set icon."
+#~ msgstr "Ikone ni mogoče določiti."
+
+# generic/printps.cpp:209
+# msw/printwin.cpp:252
+#~ msgid "Could not set maximum width."
+#~ msgstr "Največje širine ni mogoče določiti."
+
+# generic/printps.cpp:209
+# msw/printwin.cpp:252
+#~ msgid "Could not set minimum width."
+#~ msgstr "Najmanjše širine ni mogoče določiti."
+
+# generic/printps.cpp:209
+# msw/printwin.cpp:252
+#~ msgid "Could not set property flags."
+#~ msgstr "Zastavic lastnosti ni mogoče nastaviti."
+
+# common/imagbmp.cpp:266
+# common/imagbmp.cpp:278
+#~ msgid "Couldn't acquire a mutex lock"
+#~ msgstr "Zaklopa mutexa ne morem pridobiti."
+
+# common/imagbmp.cpp:266
+# common/imagbmp.cpp:278
+#~ msgid "Couldn't release a mutex"
+#~ msgstr "Ne morem sprostiti mutexa."
+
+#~ msgid "Data object has invalid data format"
+#~ msgstr "Podatkovni predmet ima neveljavni podatkovni zapis"
+
+#~ msgid "Date renderer cannot render value; value type: "
+#~ msgstr "Upodobitelj podatkov ne more upodobiti vrednost; vrsta vrednosti: "
+
+#~ msgid ""
+#~ "Do you want to overwrite the command used to %s files with extension \"%s\" ?\n"
+#~ "Current value is \n"
+#~ "%s, \n"
+#~ "New value is \n"
+#~ "%s %1"
+#~ msgstr ""
+#~ "Želite prepisati ukaz za %s datotek s končnico \"%s\" ?\n"
+#~ "Trenutna vrednost je \n"
+#~ "%s, \n"
+#~ "Nova vrednost je \n"
+#~ "%s %1"
+
+#~ msgid "Execution of command '%s' failed with error: %ul"
+#~ msgstr "Izvajanje ukaza '%s' neuspešno z napako: %ul"
+
+# msw/clipbrd.cpp:428
+#~ msgid "Failed to retrieve data from the clipboard."
+#~ msgstr "Podatkov iz odložišča ni mogoče pridobiti."
+
+# generic/filedlgg.cpp:1074
+#~ msgid ""
+#~ "File '%s' already exists.\n"
+#~ "Do you want to replace it?"
+#~ msgstr ""
+#~ "Datoteka '%s' že obstaja.\n"
+#~ "Jo želite prepisati?"
+
+#~ msgid "GIF: Invalid gif index."
+#~ msgstr "GIF: neveljaven indeks gif."
+
+# common/imaggif.cpp:64
+#~ msgid "GIF: unknown error!!!"
+#~ msgstr "GIF: neznana napaka!!!"
+
+#~ msgid "Icon & text renderer cannot render value; value type: "
+#~ msgstr "Upodobitelj ikon in besedila ne more upodobiti vrednosti; vrsta vrednosti: "
+
+#~ msgid "Invalid data view item"
+#~ msgstr "Neveljaven element pogleda podatkov"
+
+# generic/dirdlgg.cpp:536
+#~ msgid "New directory"
+#~ msgstr "Nova mapa"
+
+# msw/mdi.cpp:188
+#~ msgid "Next"
+#~ msgstr "Naslednji"
+
+#~ msgid "No column existing."
+#~ msgstr "Stolpec ne obstaja."
+
+#, fuzzy
+#~ msgid "No column for the specified column existing."
+#~ msgstr "Na navedenem mestu kazala stolpca ne obstaja noben stolpec."
+
+#~ msgid "No column for the specified column position existing."
+#~ msgstr "Na navedenem položaju stolpca ne obstaja noben stolpec."
+
+#~ msgid "No renderer or invalid renderer type specified for custom data column."
+#~ msgstr "Upodobitelj ni določen ali določena neveljavna vrsta upodobitelja za podatkovni stolpec po meri."
+
+#~ msgid "No renderer specified for column."
+#~ msgstr "Za stolpec ni določen noben upodobitelj."
+
+#~ msgid "Number of columns could not be determined."
+#~ msgstr "Števila stolpcev ni mogoče ugotoviti."
+
+#~ msgid "OpenGL function \"%s\" failed: %s (error %d)"
+#~ msgstr "Funkcija OpenGL \"%s\" ni uspela: %s (napaka %d)"
+
+#~ msgid ""
+#~ "Please install a newer version of comctl32.dll\n"
+#~ "(at least version 4.70 is required but you have %d.%02d)\n"
+#~ "or this program won't operate correctly."
+#~ msgstr ""
+#~ "Prosimo, namestite novejšo različico comctl32.dll\n"
+#~ "(zahtevana je vsaj različica 4.70, vaša je %d.%02d)\n"
+#~ "ali pa ta program ne bo deloval pravilno."
+
+#~ msgid "Pointer to data view control not set correctly."
+#~ msgstr "Kazalec na kontrolnik pogleda podatkov ni pravilno nastavljen."
+
+#~ msgid "Pointer to model not set correctly."
+#~ msgstr "Kazalec na model ni pravilno nastavljen."
+
+#~ msgid "Progress renderer cannot render value type; value type: "
+#~ msgstr "Upodobitelj napredka ne more upodobiti vrednosti; vrsta vrednosti: "
+
+#~ msgid "Rendering failed."
+#~ msgstr "Upodabljanje ni uspelo."
+
+# generic/filedlgg.cpp:913
+#~ msgid "Show hidden directories"
+#~ msgstr "Pokaži skrite mape"
+
+#~ msgid "Text renderer cannot render value; value type: "
+#~ msgstr "Upodobitelj besedila ne more upodobiti vrednosti; vrsta vrednosti: "
+
+#~ msgid "The previous message repeated %lu time."
+#~ msgid_plural "The previous message repeated %lu times."
+#~ msgstr[0] "Prejšnje sporočilo ponovljeno %lu-krat."
+#~ msgstr[1] "Prejšnje sporočilo ponovljeno %lu-krat."
+#~ msgstr[2] "Prejšnje sporočilo ponovljeno %lu-krat."
+#~ msgstr[3] "Prejšnje sporočilo ponovljeno %lu-krat."
+
+#~ msgid "There is no column or renderer for the specified column index."
+#~ msgstr "Za navedeno kazalo stolpca ni stolpca ali upodobitelja."
+
+#~ msgid "This system doesn't support date controls, please upgrade your version of comctl32.dll"
+#~ msgstr "Ta sistem ne podpira kontrolnika za izbor datuma, prosimo, nadgradite svojo različico comctl32.dll"
+
+#~ msgid "Timer creation failed."
+#~ msgstr "Ustvarjanje časovnika (timer) ni uspelo."
+
+#~ msgid "Toggle renderer cannot render value; value type: "
+#~ msgstr "Upodobitelj preklopa ne more upodobiti vrednosti; vrsta vrednosti: "
+
+#~ msgid "Too many colours in PNG, the image may be slightly blurred."
+#~ msgstr "V PNG je preveč barv, slika bo morda malce neostra."
+
+#~ msgid "Unable to initialize Hildon program"
+#~ msgstr "Program Hildon neuspešno vzpostavljen"
+
+#, fuzzy
+#~ msgid "Unable to remove inotify watch"
+#~ msgstr "Ni mogoče odstraniti opazovalnice inotify %i."
+
+#~ msgid "Unknown data format"
+#~ msgstr "Neznan zapis podatkov"
+
+#~ msgid "Valid pointer to native data view control does not exist"
+#~ msgstr "Veljavni kazalec na domorodni kontrolnik pogleda podatkov ne obstaja"
+
+# msw/utils.cpp:545
+#~ msgid "Win32s on Windows 3.1"
+#~ msgstr "Win32s na Windows 3.1"
+
+# msw/utils.cpp:549
+#~ msgid "Windows 2000"
+#~ msgstr "Windows 2000"
+
+# msw/utils.cpp:549
+#~ msgid "Windows 7"
+#~ msgstr "Windows 7"
+
+# msw/utils.cpp:549
+#~ msgid "Windows 8"
+#~ msgstr "Windows 8"
+
+# msw/utils.cpp:549
+#~ msgid "Windows 8.1"
+#~ msgstr "Windows 8.1"
+
+# msw/utils.cpp:549
+#~ msgid "Windows 95"
+#~ msgstr "Windows 95"
+
+# msw/utils.cpp:549
+#~ msgid "Windows 95 OSR2"
+#~ msgstr "Windows 95 OSR2"
+
+# msw/utils.cpp:549
+#~ msgid "Windows 98"
+#~ msgstr "Windows 98"
+
+# msw/utils.cpp:549
+#~ msgid "Windows 98 SE"
+#~ msgstr "Windows 98 SE"
+
+# msw/utils.cpp:549
+#~ msgid "Windows 9x (%d.%d)"
+#~ msgstr "Windows 9x (%d.%d)"
+
+# msw/utils.cpp:549
+#~ msgid "Windows CE (%d.%d)"
+#~ msgstr "Windows CE (%d.%d)"
+
+# msw/utils.cpp:549
+#~ msgid "Windows ME"
+#~ msgstr "Windows ME"
+
+#~ msgid "Windows NT %lu.%lu"
+#~ msgstr "Windows NT %lu.%lu"
+
+#~ msgid "Windows Server 2003"
+#~ msgstr "Windows Server 2003"
+
+#~ msgid "Windows Server 2008"
+#~ msgstr "Windows Server 2008"
+
+#~ msgid "Windows Server 2008 R2"
+#~ msgstr "Windows Server 2008 R2"
+
+#~ msgid "Windows Server 2012"
+#~ msgstr "Windows Server 2012"
+
+#~ msgid "Windows Server 2012 R2"
+#~ msgstr "Windows Server 2012 R2"
+
+# msw/utils.cpp:549
+#~ msgid "Windows Vista"
+#~ msgstr "Windows Vista"
+
+# msw/utils.cpp:549
+#~ msgid "Windows XP"
+#~ msgstr "Windows XP"
+
+#~ msgid "buffer is too small for Windows directory."
+#~ msgstr "medpomnilnik je za mapo Windows premajhen"
+
+# common/ffile.cpp:182
+#~ msgid "can't execute '%s'"
+#~ msgstr "'%s' ni mogoče izvesti"
+
+# common/ffile.cpp:133
+# common/ffile.cpp:154
+#~ msgid "error opening '%s'"
+#~ msgstr "napaka pri odpiranju datoteke '%s'"
+
+# common/fileconf.cpp:481
+#~ msgid "file '%s', line %d: '%s' ignored after group header."
+#~ msgstr "datoteka '%s', vrstica %d: '%s' je bil ignoriran po skupinski glavi."
+
+# common/fileconf.cpp:510
+#~ msgid "file '%s', line %d: '=' expected."
+#~ msgstr "datoteka '%s', vrstica %d: '=' pričakovan."
+
+# common/fileconf.cpp:536
+#~ msgid "file '%s', line %d: key '%s' was first found at line %d."
+#~ msgstr "datoteka '%s', vrstica %d: ključ '%s' je bil že najden v vrstici %d."
+
+# common/fileconf.cpp:526
+#~ msgid "file '%s', line %d: value for immutable key '%s' ignored."
+#~ msgstr "datoteka '%s', vrstica %d: vrednost immutable kluča '%s' ignorirana."
+
+# common/fileconf.cpp:449
+#~ msgid "file '%s': unexpected character %c at line %d."
+#~ msgstr "datoteka '%s': nepričakovan znak %c v vrstici %d"
+
+# common/file.cpp:342
+#~ msgid "unknown seek origin"
+#~ msgstr "nepoznana smer iskanja"
+
+#~ msgid "wxWidget control pointer is not a data view pointer"
+#~ msgstr "Nadzorni kazalec wxWidget ni kazalec pogleda podatkov"
+
+# html/helpfrm.cpp:1174
+#~ msgid "wxWidget's control not initialized."
+#~ msgstr "Kontrolnik wxWidget ni vzpostavljen."
+
+# html/helpfrm.cpp:718
+# html/helpfrm.cpp:719
+# html/helpfrm.cpp:1277
+# html/helpfrm.cpp:1304
+#~ msgid "%i of %i"
+#~ msgstr "%i od %i"
+
+#~ msgid "ADD"
+#~ msgstr "DODAJ"
+
+#~ msgid "BACK"
+#~ msgstr "VRAČALKA"
+
+#~ msgid "CANCEL"
+#~ msgstr "PREKLIČI"
+
+#~ msgid "CAPITAL"
+#~ msgstr "VELIKEČRKE"
+
+#~ msgid "CLEAR"
+#~ msgstr "POČISTI"
+
+#~ msgid "COMMAND"
+#~ msgstr "UKAZ"
+
+#~ msgid "Couldn't get hatch style from wxBrush."
+#~ msgstr "Iz wxBrush ni mogoče dobiti sloga šrafiranja."
+
+#~ msgid "DECIMAL"
+#~ msgstr "DECIMALNO"
+
+#~ msgid "DEL"
+#~ msgstr "DEL"
+
+#~ msgid "DELETE"
+#~ msgstr "DELETE"
+
+# generic/filedlgg.cpp:356
+#~ msgid "DIVIDE"
+#~ msgstr "DELI"
+
+#~ msgid "DOWN"
+#~ msgstr "NAVZDOL"
+
+#~ msgid "END"
+#~ msgstr "KONEC"
+
+#~ msgid "ENTER"
+#~ msgstr "VNAŠALKA"
+
+#~ msgid "ESC"
+#~ msgstr "UBEŽNICA"
+
+#~ msgid "ESCAPE"
+#~ msgstr "UBEŽNICA"
+
+#~ msgid "EXECUTE"
+#~ msgstr "IZVRŠEVALKA"
+
+#~ msgid "HELP"
+#~ msgstr "POMOČ"
+
+#~ msgid "HOME"
+#~ msgstr "HOME"
+
+#~ msgid "INS"
+#~ msgstr "INS"
+
+#~ msgid "INSERT"
+#~ msgstr "INSERT"
+
+#~ msgid "KP_ADD"
+#~ msgstr "KP_DODAJ"
+
+#~ msgid "KP_BEGIN"
+#~ msgstr "KP_ZAČNI"
+
+#~ msgid "KP_DECIMAL"
+#~ msgstr "KP_DECIMALNO"
+
+#~ msgid "KP_DELETE"
+#~ msgstr "KP_DELETE"
+
+#~ msgid "KP_DIVIDE"
+#~ msgstr "KP_DELJENO"
+
+#~ msgid "KP_DOWN"
+#~ msgstr "KP_DOL"
+
+#~ msgid "KP_END"
+#~ msgstr "KP_KONEC"
+
+#~ msgid "KP_ENTER"
+#~ msgstr "KP_VNAŠALKA"
+
+#~ msgid "KP_EQUAL"
+#~ msgstr "KP_JEENAKO"
+
+#~ msgid "KP_HOME"
+#~ msgstr "KP_HOME"
+
+#~ msgid "KP_INSERT"
+#~ msgstr "KP_INSERT"
+
+#~ msgid "KP_LEFT"
+#~ msgstr "KP_LEVO"
+
+#~ msgid "KP_MULTIPLY"
+#~ msgstr "KP_KRAT"
+
+#~ msgid "KP_NEXT"
+#~ msgstr "KP_NASLEDNJI"
+
+#~ msgid "KP_PAGEDOWN"
+#~ msgstr "KP_NASLEDNJASTRAN"
+
+#~ msgid "KP_PAGEUP"
+#~ msgstr "KP_PREJŠNJASTRAN"
+
+#~ msgid "KP_PRIOR"
+#~ msgstr "KP_PREJŠNJI"
+
+#~ msgid "KP_RIGHT"
+#~ msgstr "KP_DESNO"
+
+#~ msgid "KP_SEPARATOR"
+#~ msgstr "KP_LOČILO"
+
+#~ msgid "KP_SPACE"
+#~ msgstr "KP_PRESLEDNICA"
+
+#~ msgid "KP_SUBTRACT"
+#~ msgstr "KP_MINUS"
+
+#~ msgid "KP_TAB"
+#~ msgstr "KP_TABULATORKA"
+
+#~ msgid "KP_UP"
+#~ msgstr "KP_GOR"
+
+#~ msgid "LEFT"
+#~ msgstr "LEVO"
+
+#~ msgid "MENU"
+#~ msgstr "MENI"
+
+#~ msgid "NUM_LOCK"
+#~ msgstr "NUM_LOCK"
+
+#~ msgid "PAGEDOWN"
+#~ msgstr "NASLEDNJASTRAN"
+
+#~ msgid "PAGEUP"
+#~ msgstr "PREJŠNJASTRAN"
+
+#~ msgid "PAUSE"
+#~ msgstr "PREMOR"
+
+#~ msgid "PGDN"
+#~ msgstr "PGDN"
+
+#~ msgid "PGUP"
+#~ msgstr "PGUP"
+
+#~ msgid "PRINT"
+#~ msgstr "NATISNI"
+
+#~ msgid "RETURN"
+#~ msgstr "RETURN"
+
+#~ msgid "RIGHT"
+#~ msgstr "DESNO"
+
+#~ msgid "SCROLL_LOCK"
+#~ msgstr "SCROLL_LOCK"
+
+#~ msgid "SELECT"
+#~ msgstr "IZBERI"
+
+#~ msgid "SEPARATOR"
+#~ msgstr "LOČILO"
+
+#~ msgid "SNAPSHOT"
+#~ msgstr "SNAPSHOT"
+
+#~ msgid "SPACE"
+#~ msgstr "PRESLEDNICA"
+
+#~ msgid "SUBTRACT"
+#~ msgstr "MINUS"
+
+#~ msgid "TAB"
+#~ msgstr "TAB"
+
+#~ msgid "The print dialog returned an error."
+#~ msgstr "Pogovorno okno za tiskanje je vrnilo napako."
+
+#~ msgid "The wxGtkPrinterDC cannot be used."
+#~ msgstr "wxGtkPrinterDC ni mogoče uporabiti."
+
+#~ msgid "UP"
+#~ msgstr "GOR"
+
+#~ msgid "WINDOWS_LEFT"
+#~ msgstr "WINDOWS_LEVO"
+
+#~ msgid "WINDOWS_MENU"
+#~ msgstr "WINDOWS_MENI"
+
+#~ msgid "WINDOWS_RIGHT"
+#~ msgstr "WINDOWS_DESNO"
+
+#~ msgid "not implemented"
+#~ msgstr "ni implementirano"
+
+#~ msgid "wxPrintout::GetPageInfo gives a null maxPage."
+#~ msgstr "wxPrintout::GetPageInfo vrne ničelno vrednost maxPage."
+
+#, fuzzy
+#~ msgid "Event queue overflowed"
+#~ msgstr "Vrsta dogodka prekoračena"
+
+#~ msgid "percent"
+#~ msgstr "odstotek"
+
+# common/docview.cpp:897
+#~ msgid "Print preview"
+#~ msgstr "Predogled tiskanja"
+
+#, fuzzy
+#~ msgid "'"
+#~ msgstr "'"
+
+#~ msgid "1"
+#~ msgstr "1"
+
+#~ msgid "10"
+#~ msgstr "10"
+
+#~ msgid "3"
+#~ msgstr "3"
+
+#~ msgid "4"
+#~ msgstr "4"
+
+#~ msgid "5"
+#~ msgstr "5"
+
+#~ msgid "6"
+#~ msgstr "6"
+
+#~ msgid "7"
+#~ msgstr "7"
+
+#~ msgid "8"
+#~ msgstr "8"
+
+#~ msgid "9"
+#~ msgstr "9"
+
+#~ msgid "File system containing watched object was unmounted"
+#~ msgstr "Datotečni sistem, ki vsebuje opazovani predmet, je bil odklopljen"
