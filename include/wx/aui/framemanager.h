@@ -497,7 +497,7 @@ public:
     void Update();
 
     wxString SavePaneInfo(const wxAuiPaneInfo& pane);
-    void LoadPaneInfo(wxString panePart, wxAuiPaneInfo &pane);
+    void LoadPaneInfo(wxString panePart, wxAuiPaneInfo &pane, const wxSize& ppi_on_save);
     wxString SavePerspective();
     bool LoadPerspective(const wxString& perspective, bool update = true);
 

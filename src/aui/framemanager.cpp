@@ -1451,8 +1451,10 @@ wxString wxAuiManager::SavePaneInfo(const wxAuiPaneInfo& pane)
 }
 
 // Load a "pane" with the pane information settings in pane_part
-void wxAuiManager::LoadPaneInfo(wxString pane_part, wxAuiPaneInfo &pane)
+void wxAuiManager::LoadPaneInfo(wxString pane_part, wxAuiPaneInfo &pane, const wxSize& ppi_on_save)
 {
+    wxSize ppi = wxClientDC(m_frame).GetPPI();
+
     // replace escaped characters so we can
     // split up the string easily
     pane_part.Replace(wxT("\\|"), wxT("\a"));
@@ -1469,6 +1471,7 @@ void wxAuiManager::LoadPaneInfo(wxString pane_part, wxAuiPaneInfo &pane)
         val_name.Trim(false);
         value.Trim(true);
         value.Trim(false);
+        int value_int;
 
         if (val_name.empty())
             break;
@@ -1486,29 +1489,42 @@ void wxAuiManager::LoadPaneInfo(wxString pane_part, wxAuiPaneInfo &pane)
         else if (val_name == wxT("row"))
             pane.dock_row = wxAtoi(value.c_str());
         else if (val_name == wxT("pos"))
-            pane.dock_pos = wxAtoi(value.c_str());
+            pane.dock_pos = (value_int = wxAtoi(value.c_str())) == -1 ? -1 :
+                            pane.dock_direction == wxAUI_DOCK_TOP ||
+                            pane.dock_direction == wxAUI_DOCK_BOTTOM  ? wxMulDivInt32(value_int, ppi.x, ppi_on_save.x) :
+                                                                        wxMulDivInt32(value_int, ppi.y, ppi_on_save.y);
         else if (val_name == wxT("prop"))
             pane.dock_proportion = wxAtoi(value.c_str());
         else if (val_name == wxT("bestw"))
-            pane.best_size.x = wxAtoi(value.c_str());
+            pane.best_size.x = (value_int = wxAtoi(value.c_str())) == -1 ? -1 :
+                                                                           wxMulDivInt32(value_int, ppi.x, ppi_on_save.x);
         else if (val_name == wxT("besth"))
-            pane.best_size.y = wxAtoi(value.c_str());
+            pane.best_size.y = (value_int = wxAtoi(value.c_str())) == -1 ? -1 :
+                                                                           wxMulDivInt32(value_int, ppi.y, ppi_on_save.y);
         else if (val_name == wxT("minw"))
-            pane.min_size.x = wxAtoi(value.c_str());
+            pane.min_size.x = (value_int = wxAtoi(value.c_str())) == -1 ? -1 :
+                                                                          wxMulDivInt32(value_int, ppi.x, ppi_on_save.x);
         else if (val_name == wxT("minh"))
-            pane.min_size.y = wxAtoi(value.c_str());
+            pane.min_size.y = (value_int = wxAtoi(value.c_str())) == -1 ? -1 :
+                                                                          wxMulDivInt32(value_int, ppi.y, ppi_on_save.y);
         else if (val_name == wxT("maxw"))
-            pane.max_size.x = wxAtoi(value.c_str());
+            pane.max_size.x = (value_int = wxAtoi(value.c_str())) == -1 ? -1 :
+                                                                          wxMulDivInt32(value_int, ppi.x, ppi_on_save.x);
         else if (val_name == wxT("maxh"))
-            pane.max_size.y = wxAtoi(value.c_str());
+            pane.max_size.y = (value_int = wxAtoi(value.c_str())) == -1 ? -1 :
+                                                                          wxMulDivInt32(value_int, ppi.y, ppi_on_save.y);
         else if (val_name == wxT("floatx"))
-            pane.floating_pos.x = wxAtoi(value.c_str());
+            pane.floating_pos.x = (value_int = wxAtoi(value.c_str())) == -1 ? -1 :
+                                                                              wxMulDivInt32(value_int, ppi.x, ppi_on_save.x);
         else if (val_name == wxT("floaty"))
-            pane.floating_pos.y = wxAtoi(value.c_str());
+            pane.floating_pos.y = (value_int = wxAtoi(value.c_str())) == -1 ? -1 :
+                                                                              wxMulDivInt32(value_int, ppi.y, ppi_on_save.y);
         else if (val_name == wxT("floatw"))
-            pane.floating_size.x = wxAtoi(value.c_str());
+            pane.floating_size.x = (value_int = wxAtoi(value.c_str())) == -1 ? -1 :
+                                                                               wxMulDivInt32(value_int, ppi.x, ppi_on_save.x);
         else if (val_name == wxT("floath"))
-            pane.floating_size.y = wxAtoi(value.c_str());
+            pane.floating_size.y = (value_int = wxAtoi(value.c_str())) == -1 ? -1 :
+                                                                               wxMulDivInt32(value_int, ppi.y, ppi_on_save.y);
         else {
             wxFAIL_MSG(wxT("Bad Perspective String"));
         }
@@ -1537,6 +1553,10 @@ wxString wxAuiManager::SavePerspective()
     wxString result;
     result.Alloc(500);
     result = wxT("layout2|");
+
+    wxSize ppi = wxClientDC(m_frame).GetPPI();
+    result += wxString::Format(wxT("ppi=%d,%d|"),
+                               ppi.x, ppi.y);
 
     int pane_i, pane_count = m_panes.GetCount();
     for (pane_i = 0; pane_i < pane_count; ++pane_i)
@@ -1594,6 +1614,8 @@ bool wxAuiManager::LoadPerspective(const wxString& layout, bool update)
     input.Replace(wxT("\\|"), wxT("\a"));
     input.Replace(wxT("\\;"), wxT("\b"));
 
+    wxSize ppi = wxClientDC(m_frame).GetPPI();
+    wxSize ppi_on_save(96, 96);
     m_hasMaximized = false;
     while (1)
     {
@@ -1607,7 +1629,19 @@ bool wxAuiManager::LoadPerspective(const wxString& layout, bool update)
         if (pane_part.empty())
             break;
 
-        if (pane_part.Left(9) == wxT("dock_size"))
+        if (pane_part.Left(3) == wxT("ppi"))
+        {
+            wxString value = pane_part.AfterFirst(wxT('='));
+
+            long ppi_horz, ppi_vert;
+            value.BeforeFirst(wxT(',')).ToLong(&ppi_horz);
+            value.AfterFirst(wxT(',')).ToLong(&ppi_vert);
+
+            ppi_on_save.x = ppi_horz;
+            ppi_on_save.y = ppi_vert;
+            continue;
+        }
+        else if (pane_part.Left(9) == wxT("dock_size"))
         {
             wxString val_name = pane_part.BeforeFirst(wxT('='));
             wxString value = pane_part.AfterFirst(wxT('='));
@@ -1625,7 +1659,9 @@ bool wxAuiManager::LoadPerspective(const wxString& layout, bool update)
             dock.dock_direction = dir;
             dock.dock_layer = layer;
             dock.dock_row = row;
-            dock.size = size;
+            dock.size = size == -1          ? -1 :
+                        dock.IsHorizontal() ? wxMulDivInt32(size, ppi.x, ppi_on_save.x) :
+                                              wxMulDivInt32(size, ppi.y, ppi_on_save.y);
             m_docks.Add(dock);
             continue;
         }
@@ -1635,7 +1671,7 @@ bool wxAuiManager::LoadPerspective(const wxString& layout, bool update)
         pane_part.Replace(wxT("\a"), wxT("|"));
         pane_part.Replace(wxT("\b"), wxT(";"));
 
-        LoadPaneInfo(pane_part, pane);
+        LoadPaneInfo(pane_part, pane, ppi_on_save);
 
         if ( pane.IsMaximized() )
             m_hasMaximized = true;
