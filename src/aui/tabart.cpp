@@ -1074,19 +1074,28 @@ void wxAuiSimpleTabArt::DrawTab(wxDC& dc,
     // -- draw line --
 
     wxPoint points[7];
-    points[0].x = tab_x;
-    points[0].y = tab_y + tab_height - 1;
-    points[1].x = tab_x + tab_height - 3;
-    points[1].y = tab_y + 2;
-    points[2].x = tab_x + tab_height + 3;
-    points[2].y = tab_y;
-    points[3].x = tab_x + tab_width - 2;
-    points[3].y = tab_y;
-    points[4].x = tab_x + tab_width;
-    points[4].y = tab_y + 2;
-    points[5].x = tab_x + tab_width;
-    points[5].y = tab_y + tab_height - 1;
-    points[6] = points[0];
+    if (m_flags &wxAUI_NB_BOTTOM)
+    {
+        points[0] = wxPoint(tab_x                , tab_y                );
+        points[1] = wxPoint(tab_x + tab_height -3, tab_y + tab_height -3);
+        points[2] = wxPoint(tab_x + tab_height +3, tab_y + tab_height -1);
+        points[3] = wxPoint(tab_x + tab_width  -2, tab_y + tab_height -1);
+        points[4] = wxPoint(tab_x + tab_width    , tab_y + tab_height -3);
+        points[5] = wxPoint(tab_x + tab_width    , tab_y                );
+        points[6] = points[0];
+    }
+    else //if (m_flags & wxAUI_NB_TOP) {}
+    {
+        points[0] = wxPoint(tab_x                , tab_y + tab_height -1);
+        points[1] = wxPoint(tab_x + tab_height -3, tab_y              +2);
+        points[2] = wxPoint(tab_x + tab_height +3, tab_y                );
+        points[3] = wxPoint(tab_x + tab_width  -2, tab_y                );
+        points[4] = wxPoint(tab_x + tab_width    , tab_y              +2);
+        points[5] = wxPoint(tab_x + tab_width    , tab_y + tab_height -1);
+        points[6] = points[0];
+    }
+    // TODO: else if (m_flags &wxAUI_NB_LEFT) {}
+    // TODO: else if (m_flags &wxAUI_NB_RIGHT) {}
 
     dc.SetClippingRegion(in_rect);
 
