@@ -292,7 +292,6 @@ set(QT_SRC
     src/qt/dcscreen.cpp
     src/qt/defs.cpp
     src/qt/dialog.cpp
-    src/unix/dialup.cpp
     src/qt/display.cpp
     src/qt/dnd.cpp
     src/qt/evtloop.cpp
@@ -353,9 +352,7 @@ set(QT_SRC
     src/generic/activityindicator.cpp
     src/common/taskbarcmn.cpp
     src/generic/animateg.cpp
-    src/unix/sound.cpp
     src/qt/calctrl.cpp
-    src/unix/joystick.cpp
     src/qt/dataview.cpp
     src/qt/taskbar.cpp
 )
@@ -2211,6 +2208,7 @@ set(DFB_LOWLEVEL_SRC
     src/dfb/utils.cpp
     src/dfb/window.cpp
     src/dfb/wrapdfb.cpp
+    src/generic/animateg.cpp
 )
 
 set(DFB_LOWLEVEL_HDR
@@ -2239,6 +2237,7 @@ set(DFB_LOWLEVEL_HDR
     wx/dfb/toplevel.h
     wx/dfb/window.h
     wx/dfb/wrapdfb.h
+    wx/generic/animate.h
 )
 
 set(OSX_LOWLEVEL_SRC
@@ -2313,7 +2312,6 @@ set(OSX_COMMON_SRC
     src/osx/carbon/cursor.cpp
     src/osx/carbon/fontdlg.cpp
     src/osx/carbon/gdiobj.cpp
-    src/osx/carbon/icon.cpp
     src/osx/carbon/app.cpp
     src/osx/carbon/control.cpp
     src/osx/carbon/dataobj.cpp
@@ -2346,6 +2344,7 @@ set(OSX_COMMON_SRC
     src/generic/prntdlgg.cpp
     src/generic/statusbr.cpp
     src/generic/textmeasure.cpp
+    src/generic/icon.cpp
     #TODO: </if>
 )
 
@@ -2388,7 +2387,6 @@ set(OSX_SHARED_HDR
     wx/osx/fontdlg.h
     wx/osx/frame.h
     wx/osx/gauge.h
-    wx/osx/icon.h
     wx/osx/imaglist.h
     wx/osx/listbox.h
     wx/osx/listctrl.h
@@ -2443,6 +2441,7 @@ set(OSX_SHARED_HDR
     wx/generic/prntdlgg.h
     wx/generic/statusbr.h
     wx/osx/appprogress.h
+    wx/generic/icon.h
 )
 
 set(OSX_COCOA_SRC
@@ -2526,7 +2525,6 @@ set(OSX_COCOA_HDR
 set(OSX_IPHONE_SRC
     ${OSX_COMMON_SRC}
     src/generic/regiong.cpp
-    src/generic/icon.cpp
     src/osx/cocoa/stdpaths.mm
     # iphone files
     src/osx/iphone/anybutton.mm
