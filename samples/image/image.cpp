@@ -663,7 +663,7 @@ MyFrame::MyFrame()
 
     wxMenu *menuImage = new wxMenu;
     menuImage->Append( ID_NEW, "&Show any image...\tCtrl-O");
-    menuImage->Append(ID_NEW_HIDPI, wxS("Show any image as &HiDPI...\tCtrl-H"));
+    menuImage->Append(ID_NEW_HIDPI, "Show any image as &HiDPI...\tCtrl-H");
     menuImage->Append( ID_INFO, "Show image &information...\tCtrl-I");
 #ifdef wxHAVE_RAW_BITMAP
     menuImage->AppendSeparator();
@@ -752,7 +752,7 @@ wxString MyFrame::LoadUserImage(wxImage& image)
     {
         if ( !image.LoadFile(filename) )
         {
-            wxLogError("Couldn't load image from '%s'.", filename.c_str());
+            wxLogError("Couldn't load image from '%s'.", filename);
 
             return wxEmptyString;
         }
@@ -962,7 +962,7 @@ void MyFrame::OnThumbnail( wxCommandEvent &WXUNUSED(event) )
     wxStopWatch sw;
     if ( !image.LoadFile(filename) )
     {
-        wxLogError("Couldn't load image from '%s'.", filename.c_str());
+        wxLogError("Couldn't load image from '%s'.", filename);
         return;
     }
 

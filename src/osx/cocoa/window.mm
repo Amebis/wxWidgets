@@ -2573,6 +2573,10 @@ bool wxWidgetCocoaImpl::IsVisible() const
 void wxWidgetCocoaImpl::SetVisibility( bool visible )
 {
     [m_osxView setHidden:(visible ? NO:YES)];
+    
+    // trigger redraw upon shown for layer-backed views
+    if( m_osxView.layer && !m_osxView.isHiddenOrHasHiddenAncestor )
+        SetNeedsDisplay(NULL);
 }
 
 double wxWidgetCocoaImpl::GetContentScaleFactor() const
@@ -3028,7 +3032,7 @@ static void SetSubviewsNeedDisplay( NSView *view )
 {
     for ( NSView *sub in view.subviews )
     {
-        if ( !sub.layer )
+        if ( sub.isHidden || !sub.layer )
             continue;
 
         [sub setNeedsDisplay:YES];
@@ -3136,7 +3140,14 @@ void wxWidgetCocoaImpl::SetBackgroundColour( const wxColour &col )
 
     if ( [targetView respondsToSelector:@selector(setBackgroundColor:) ] )
     {
-        [targetView setBackgroundColor: col.OSXGetNSColor()];
+        wxWindow* peer = GetWXPeer();
+        if ( peer->GetBackgroundStyle() != wxBG_STYLE_TRANSPARENT )
+        {
+            wxTopLevelWindow* toplevel = wxDynamicCast(peer,wxTopLevelWindow);
+
+            if ( toplevel == NULL || toplevel->GetShape().IsEmpty() )
+                [targetView setBackgroundColor: col.OSXGetNSColor()];
+        }
     }
 }
 
@@ -3147,6 +3158,8 @@ bool wxWidgetCocoaImpl::SetBackgroundStyle( wxBackgroundStyle style )
     if ( [m_osxView respondsToSelector:@selector(setOpaque:) ] )
     {
         [m_osxView setOpaque: opaque];
+        if ( style == wxBG_STYLE_TRANSPARENT )
+            [m_osxView setBackgroundColor:[NSColor clearColor]];
     }
     
     return true ;

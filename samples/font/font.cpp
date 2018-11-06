@@ -45,7 +45,7 @@
 #endif
 
 // used as title for several dialog boxes
-static wxString SAMPLE_TITLE()
+static wxString GetSampleTitle()
 {
     return "wxWidgets Font Sample";
 }
@@ -582,7 +582,7 @@ protected:
     {
         wxString text;
         text.Printf("Encoding %u: %s (available in facename '%s')\n",
-                    (unsigned int) ++m_n, encoding.c_str(), facename.c_str());
+                    (unsigned int) ++m_n, encoding, facename);
         m_text += text;
         return true;
     }
@@ -599,7 +599,7 @@ void MyFrame::OnEnumerateEncodings(wxCommandEvent& WXUNUSED(event))
     fontEnumerator.EnumerateEncodings();
 
     wxLogMessage("Enumerating all available encodings:\n%s",
-                 fontEnumerator.GetText().c_str());
+                 fontEnumerator.GetText());
 }
 
 // -------------------------------------------------------------
@@ -659,7 +659,7 @@ bool MyFrame::DoEnumerateFamilies(bool fixedWidthOnly,
             n = wxGetSingleChoiceIndex
                 (
                     "Choose a facename",
-                    SAMPLE_TITLE(),
+                    GetSampleTitle(),
                     nFacenames,
                     facenames,
                     this
@@ -713,8 +713,8 @@ void MyFrame::OnSetNativeDesc(wxCommandEvent& WXUNUSED(event))
     font.SetNativeFontInfo(fontInfo);
     if ( !font.IsOk() )
     {
-        wxLogError(wxT("Font info string \"%s\" is invalid."),
-                   fontInfo.c_str());
+        wxLogError("Font info string \"%s\" is invalid.",
+                   fontInfo);
         return;
     }
 
@@ -807,7 +807,7 @@ wxFontEncoding MyFrame::GetEncodingFromUser()
     int i = wxGetSingleChoiceIndex
             (
                 "Choose the encoding",
-                SAMPLE_TITLE(),
+                GetSampleTitle(),
                 names,
                 this
             );
@@ -837,7 +837,7 @@ wxFontFamily MyFrame::GetFamilyFromUser()
     int i = wxGetSingleChoiceIndex
             (
                 "Choose the family",
-                SAMPLE_TITLE(),
+                GetSampleTitle(),
                 names,
                 this
             );
@@ -1088,10 +1088,10 @@ void MyFrame::OnViewMsg(wxCommandEvent& WXUNUSED(event))
         {
             // found!
             const wxChar *pc = line.c_str() + len;
-            if ( *pc == wxT('"') )
+            if ( *pc == '"')
                 pc++;
 
-            while ( *pc && *pc != wxT('"') )
+            while ( *pc && *pc != '"')
             {
                 charset += *pc++;
             }
@@ -1103,7 +1103,7 @@ void MyFrame::OnViewMsg(wxCommandEvent& WXUNUSED(event))
     if ( !charset )
     {
         wxLogError("The file '%s' doesn't contain charset information.",
-                   filename.c_str());
+                   filename);
 
         return;
     }
@@ -1112,7 +1112,7 @@ void MyFrame::OnViewMsg(wxCommandEvent& WXUNUSED(event))
     wxFontEncoding fontenc = wxFontMapper::Get()->CharsetToEncoding(charset);
     if ( fontenc == wxFONTENCODING_SYSTEM )
     {
-        wxLogError("Charset '%s' is unsupported.", charset.c_str());
+        wxLogError("Charset '%s' is unsupported.", charset);
         return;
     }
 
@@ -1135,13 +1135,13 @@ void MyFrame::OnViewMsg(wxCommandEvent& WXUNUSED(event))
             else
             {
                 wxLogWarning("Cannot convert from '%s' to '%s'.",
-                             wxFontMapper::GetEncodingDescription(fontenc).c_str(),
-                             wxFontMapper::GetEncodingDescription(encAlt).c_str());
+                             wxFontMapper::GetEncodingDescription(fontenc),
+                             wxFontMapper::GetEncodingDescription(encAlt));
             }
         }
         else
             wxLogWarning("No fonts for encoding '%s' on this system.",
-                         wxFontMapper::GetEncodingDescription(fontenc).c_str());
+                         wxFontMapper::GetEncodingDescription(fontenc));
     }
 
     // and now create the correct font
@@ -1155,7 +1155,7 @@ void MyFrame::OnViewMsg(wxCommandEvent& WXUNUSED(event))
         else
         {
             wxLogWarning("No fonts for encoding '%s' on this system.",
-                         wxFontMapper::GetEncodingDescription(fontenc).c_str());
+                         wxFontMapper::GetEncodingDescription(fontenc));
         }
     }
 #endif // wxUSE_FILEDLG
@@ -1165,7 +1165,7 @@ void MyFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
     wxMessageBox("wxWidgets font sample\n"
                  "(c) 1999-2006 Vadim Zeitlin",
-                 wxString("About ") + SAMPLE_TITLE(),
+                 wxString("About ") + GetSampleTitle(),
                  wxOK | wxICON_INFORMATION, this);
 }
 

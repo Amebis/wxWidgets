@@ -158,7 +158,7 @@ void MyApp::DoStreamDemo(wxCommandEvent& WXUNUSED(event))
     std_file_output << f << "\n";
 
     wxString str( "Hello!" );
-    tmp.Printf( "String: %s\n", str.c_str() );
+    tmp.Printf( "String: %s\n", str );
     textCtrl.WriteText( tmp );
     text_output << str << "\n";
     std_file_output << str.ToAscii() << "\n";
@@ -188,7 +188,7 @@ void MyApp::DoStreamDemo(wxCommandEvent& WXUNUSED(event))
     char std_buf[200];
     std_file_input >> std_buf;
     str = wxString::FromAscii(std_buf);
-    tmp.Printf( "String: %s\n", str.c_str() );
+    tmp.Printf( "String: %s\n", str );
     textCtrl.WriteText( tmp );
 
     textCtrl.WriteText( "\nReading from wxFileInputStream:\n" );
@@ -216,7 +216,7 @@ void MyApp::DoStreamDemo(wxCommandEvent& WXUNUSED(event))
     textCtrl.WriteText( tmp );
 
     text_input >> str;
-    tmp.Printf( "String: %s\n", str.c_str() );
+    tmp.Printf( "String: %s\n", str );
     textCtrl.WriteText( tmp );
 
 
@@ -244,7 +244,7 @@ void MyApp::DoStreamDemo(wxCommandEvent& WXUNUSED(event))
     data_output.WriteDouble( d );
 
     str = "Hello!";
-    tmp.Printf( "String: %s\n", str.c_str() );
+    tmp.Printf( "String: %s\n", str );
     textCtrl.WriteText( tmp );
     data_output.WriteString( str );
 
@@ -268,7 +268,7 @@ void MyApp::DoStreamDemo(wxCommandEvent& WXUNUSED(event))
     textCtrl.WriteText( tmp );
 
     str = data_input.ReadString();
-    tmp.Printf( "String: %s\n", str.c_str() );
+    tmp.Printf( "String: %s\n", str );
     textCtrl.WriteText( tmp );
 }
 
@@ -1051,15 +1051,15 @@ void MyApp::DoVariantDemo(wxCommandEvent& WXUNUSED(event) )
 
     wxFont* sysFont = new wxFont(wxSystemSettings::GetFont(wxSYS_OEM_FIXED_FONT));
     var1 = wxVariant(sysFont);
-    textCtrl << wxT("var1 = (wxfont)\"");
+    textCtrl << "var1 = (wxfont)\"";
     wxFont* font = wxGetVariantCast(var1,wxFont);
     if (font)
     {
-        textCtrl << font->GetNativeFontInfoDesc() << wxT("\"\n");
+        textCtrl << font->GetNativeFontInfoDesc() << "\"\n";
     }
     else
     {
-        textCtrl << wxT("(null)\"\n");
+        textCtrl << "(null)\"\n";
     }
 
     delete sysFont;

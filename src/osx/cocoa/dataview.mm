@@ -14,7 +14,7 @@
 
 #include "wx/dataview.h"
 
-#if !defined(wxUSE_GENERICDATAVIEWCTRL)
+#if !defined(wxHAS_GENERIC_DATAVIEWCTRL)
 
 #ifndef WX_PRECOMP
     #include "wx/app.h"
@@ -1657,6 +1657,7 @@ outlineView:(NSOutlineView*)outlineView
 
     const wxDataViewItem item = wxDataViewItemFromItem([self itemAtRow:[self clickedRow]]);
     wxDataViewEvent event(wxEVT_DATAVIEW_ITEM_ACTIVATED, dvc, item);
+    event.SetColumn( [self clickedColumn] );
     dvc->GetEventHandler()->ProcessEvent(event);
 }
 
@@ -3555,6 +3556,6 @@ void wxDataViewColumn::SetNativeData(wxDataViewColumnNativeData* newNativeDataPt
     m_NativeDataPtr = newNativeDataPtr;
 }
 
-#endif // !wxUSE_GENERICDATAVIEWCTRL
+#endif // !defined(wxHAS_GENERIC_DATAVIEWCTRL)
 
 #endif // wxUSE_DATAVIEWCTRL

@@ -106,7 +106,7 @@ bool MyApp::OnInit(void)
     m_bitmap = image;
 #endif
     m_angle = 30;
-    m_testFont.Create(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+    m_testFont = wxFontInfo(10).Family(wxFONTFAMILY_SWISS);
 
 
     // Create the main frame window
@@ -162,7 +162,7 @@ void MyApp::Draw(wxDC&dc)
 
     dc.DrawText( "Test message: this is in 10 point text", 10, 180);
 
-    dc.DrawRotatedText( wxS("This\nis\na multi-line\ntext"), 170, 100, -m_angle/1.5);
+    dc.DrawRotatedText( "This\nis\na multi-line\ntext", 170, 100, -m_angle/1.5);
 
 #if wxUSE_UNICODE
     const char *test = "Hebrew    שלום -- Japanese (日本語)";

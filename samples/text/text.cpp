@@ -455,7 +455,7 @@ bool MyApp::OnInit()
         return false;
 
     // Create the main frame window
-    MyFrame *frame = new MyFrame(wxS("Text wxWidgets sample"), 50, 50);
+    MyFrame *frame = new MyFrame("Text wxWidgets sample", 50, 50);
 
     wxMenu *file_menu = new wxMenu;
     file_menu->Append(TEXT_SAVE, "&Save file\tCtrl-S",
@@ -726,7 +726,7 @@ void MyTextCtrl::LogKeyEvent(const wxString& name, wxKeyEvent& event) const
 
     wxLogMessage( "%s event: %s (flags = %c%c%c%c)",
                   name,
-                  key.c_str(),
+                  key,
                   GetChar( event.ControlDown(), 'C' ),
                   GetChar( event.AltDown(), 'A' ),
                   GetChar( event.ShiftDown(), 'S' ),
@@ -781,7 +781,7 @@ static wxString GetMouseEventDesc(const wxMouseEvent& ev)
     wxASSERT(!(dbl && up));
 
     return wxString::Format("%s mouse button %s",
-                            button.c_str(),
+                            button,
                             dbl ? "double clicked"
                                 : up ? "released" : "clicked");
 }
@@ -898,7 +898,7 @@ void MyTextCtrl::OnText(wxCommandEvent& event)
     const wxChar *data = (const wxChar *)(win->GetClientData());
     if ( data )
     {
-        wxLogMessage(wxT("Text %s in control \"%s\""), changeVerb, data);
+        wxLogMessage("Text %s in control \"%s\"", changeVerb, data);
     }
     else
     {
@@ -973,8 +973,8 @@ void MyTextCtrl::OnTextURL(wxTextUrlEvent& event)
          end = event.GetURLEnd();
 
     wxLogMessage("Mouse event over URL '%s': %s",
-                 GetValue().Mid(start, end - start).c_str(),
-                 GetMouseEventDesc(ev).c_str());
+                 GetValue().Mid(start, end - start),
+                 GetMouseEventDesc(ev));
 }
 
 void MyTextCtrl::OnChar(wxKeyEvent& event)
@@ -1018,12 +1018,12 @@ void MyTextCtrl::OnKeyDown(wxKeyEvent& event)
 
                 wxLogMessage("Selection: from %ld to %ld.", from, to);
                 wxLogMessage("Selection = '%s' (len = %u)",
-                             sel.c_str(),
+                             sel,
                              (unsigned int) sel.length());
 
                 const wxString text = GetLineText(line);
-                wxLogMessage(wxT("Current line: \"%s\"; length = %lu"),
-                             text.c_str(), text.length());
+                wxLogMessage("Current line: \"%s\"; length = %lu",
+                             text, text.length());
             }
             break;
 
@@ -1212,7 +1212,7 @@ MyPanel::MyPanel( wxFrame *frame, int x, int y, int w, int h )
                                 "very very very long line to test "
                                 "wxHSCROLL style\n"
                                 "\nAnd here is a link in quotation marks to "
-                                wxT("test wxTE_AUTO_URL: \"http://www.wxwidgets.org\""),
+                                "test wxTE_AUTO_URL: \"http://www.wxwidgets.org\"",
                                 wxPoint(450, 10), wxSize(200, 230),
                                 wxTE_RICH | wxTE_MULTILINE | wxTE_AUTO_URL);
     m_textrich->SetStyle(0, 10, *wxRED);
