@@ -878,12 +878,12 @@ bool wxListCtrl::EnsureVisible(long item)
 
 long wxListCtrl::FindItem(long start, const wxString& str, bool partial)
 {
-    int ret;
     QList <QTreeWidgetItem *> qitems = m_qtTreeWidget->findItems(
                 wxQtConvertString(str),
                 !partial ? Qt::MatchExactly : Qt::MatchContains );
     for (int i=0; i<qitems.length(); i++)
     {
+        int ret;
         ret = m_qtTreeWidget->indexOfTopLevelItem(qitems.at(i));
         if ( ret >= start )
             return ret;
@@ -1008,35 +1008,6 @@ bool wxListCtrl::ScrollList(int dx, int dy)
 bool wxListCtrl::SortItems(wxListCtrlCompare WXUNUSED(fn), wxIntPtr WXUNUSED(data))
 {
     return false;
-}
-
-// ----------------------------------------------------------------------------
-// virtual list controls (not currently implemented in wxQT)
-// ----------------------------------------------------------------------------
-
-wxString wxListCtrl::OnGetItemText(long WXUNUSED(item), long WXUNUSED(col)) const
-{
-    // this is a pure virtual function, in fact - which is not really pure
-    // because the controls which are not virtual don't need to implement it
-    wxFAIL_MSG( wxT("wxListCtrl::OnGetItemText not supposed to be called") );
-
-    return wxEmptyString;
-}
-
-int wxListCtrl::OnGetItemImage(long WXUNUSED(item)) const
-{
-    wxCHECK_MSG(!GetImageList(wxIMAGE_LIST_SMALL),
-                -1,
-                wxT("List control has an image list, OnGetItemImage or OnGetItemColumnImage should be overridden."));
-    return -1;
-}
-
-int wxListCtrl::OnGetItemColumnImage(long item, long column) const
-{
-    if (!column)
-        return OnGetItemImage(item);
-
-    return -1;
 }
 
 QWidget *wxListCtrl::GetHandle() const
