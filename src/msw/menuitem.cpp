@@ -348,7 +348,7 @@ void MenuDrawData::Init()
 
         wxUxThemeFont themeFont;
         ::GetThemeSysFont(hTheme, TMT_MENUFONT, themeFont.GetPtr());
-        Font = wxFont(themeFont.GetLOGFONT());
+        Font = wxFont(wxNativeFontInfo(themeFont.GetLOGFONT(), window));
 
         Theme = true;
 
@@ -392,7 +392,7 @@ void MenuDrawData::Init()
 
         Offset = -12;
 
-        Font = wxFont(wxNativeFontInfo(metrics.lfMenuFont));
+        Font = wxFont(wxNativeFontInfo(metrics.lfMenuFont, window));
 
         Theme = false;
     }

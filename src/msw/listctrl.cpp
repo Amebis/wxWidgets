@@ -327,13 +327,19 @@ void wxListCtrl::MSWSetExListStyles()
     // we want to have some non default extended
     // styles because it's prettier (and also because wxGTK does it like this)
     int exStyle =
-        LVS_EX_LABELTIP |
         LVS_EX_FULLROWSELECT |
         LVS_EX_SUBITEMIMAGES |
         // normally this should be governed by a style as it's probably not
         // always appropriate, but we don't have any free styles left and
         // it seems better to enable it by default than disable
         LVS_EX_HEADERDRAGDROP;
+
+    // Showing the tooltip items not fitting into the control is nice, but not
+    // really compatible with having custom tooltips, as this could result in
+    // showing 2 tooltips simultaneously, which would be confusing. So only
+    // enable this style if there is no risk of this happening.
+    if ( !GetToolTip() )
+        exStyle |= LVS_EX_LABELTIP;
 
     if ( wxApp::GetComCtl32Version() >= 600 )
     {
@@ -1217,16 +1223,33 @@ bool wxListCtrl::GetSubItemRect(long item, long subItem, wxRect& rect, int code)
                  wxT("invalid item in GetSubItemRect") );
 
     int codeWin;
-    if ( code == wxLIST_RECT_BOUNDS )
-        codeWin = LVIR_BOUNDS;
-    else if ( code == wxLIST_RECT_ICON )
-        codeWin = LVIR_ICON;
-    else if ( code == wxLIST_RECT_LABEL )
-        codeWin = LVIR_LABEL;
-    else
+    switch ( code )
     {
-        wxFAIL_MSG( wxT("incorrect code in GetItemRect() / GetSubItemRect()") );
-        codeWin = LVIR_BOUNDS;
+        case wxLIST_RECT_BOUNDS:
+            codeWin = LVIR_BOUNDS;
+            break;
+
+        case wxLIST_RECT_ICON:
+            // Only the first subitem can have an icon, so it doesn't make
+            // sense to query the native control for the other ones --
+            // especially because it returns a nonsensical non-empty icon
+            // rectangle for them.
+            if ( subItem > 0 )
+            {
+                rect = wxRect();
+                return true;
+            }
+
+            codeWin = LVIR_ICON;
+            break;
+
+        case wxLIST_RECT_LABEL:
+            codeWin = LVIR_LABEL;
+            break;
+
+        default:
+            wxFAIL_MSG( wxT("incorrect code in GetItemRect() / GetSubItemRect()") );
+            return false;
     }
 
     RECT rectWin;
@@ -1240,19 +1263,6 @@ bool wxListCtrl::GetSubItemRect(long item, long subItem, wxRect& rect, int code)
           ) )
     {
         return false;
-    }
-
-    // Although LVIR_LABEL exists, it returns the same results as LVIR_BOUNDS
-    // and not just the label rectangle as would be expected, so account for
-    // the icon ourselves in this case.
-    if ( code == wxLIST_RECT_LABEL )
-    {
-        RECT rectIcon;
-        if ( !wxGetListCtrlSubItemRect(GetHwnd(), item, subItem, LVIR_ICON,
-                                       rectIcon) )
-            return false;
-
-        rectWin.left = rectIcon.right;
     }
 
     wxCopyRECTToRect(rectWin, rect);
@@ -3604,5 +3614,17 @@ static void wxConvertToMSWListCol(HWND hwndList,
         lvCol.iImage = item.m_image;
     }
 }
+
+#if wxUSE_TOOLTIPS
+
+void wxListCtrl::DoSetToolTip(wxToolTip *tip)
+{
+    wxWindow::DoSetToolTip(tip);
+
+    // Add or remove LVS_EX_LABELTIP style as necessary.
+    MSWSetExListStyles();
+}
+
+#endif // wxUSE_TOOLTIPS
 
 #endif // wxUSE_LISTCTRL

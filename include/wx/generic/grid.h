@@ -1131,6 +1131,8 @@ public:
                          const wxArrayString& lines,
                          long *width, long *height ) const;
 
+    // If bottomRight is invalid, i.e. == wxGridNoCellCoords, it defaults to
+    // topLeft. If topLeft itself is invalid, the function simply returns.
     void RefreshBlock(const wxGridCellCoords& topLeft,
                       const wxGridCellCoords& bottomRight);
 
@@ -1357,6 +1359,11 @@ public:
     void     DisableDragColMove() { EnableDragColMove( false ); }
     bool     CanDragColMove() const { return m_canDragColMove; }
 
+    // interactive column hiding (enabled by default, works only for native header)
+    bool     EnableHidingColumns( bool enable = true );
+    void     DisableHidingColumns() { EnableHidingColumns(false); }
+    bool     CanHideColumns() { return m_canHideColumns; }
+
     // interactive resizing of grid cells (enabled by default)
     void     EnableDragGridSize(bool enable = true);
     void     DisableDragGridSize() { EnableDragGridSize(false); }
@@ -1522,6 +1529,8 @@ public:
     // reverse mapping currently
     int GetColPos(int idx) const
     {
+        wxASSERT_MSG( idx >= 0 && idx < m_numCols, "invalid column index" );
+
         if ( m_colAt.IsEmpty() )
             return idx;
 
@@ -2168,6 +2177,7 @@ protected:
     bool    m_canDragRowSize;
     bool    m_canDragColSize;
     bool    m_canDragColMove;
+    bool    m_canHideColumns;
     bool    m_canDragGridSize;
     bool    m_canDragCell;
 
@@ -2304,6 +2314,10 @@ private:
 
     // common part of Clip{Horz,Vert}GridLines
     void DoClipGridLines(bool& var, bool clip);
+
+    // Redimension() helper: update m_currentCellCoords if necessary after a
+    // grid size change
+    void UpdateCurrentCellOnRedim();
 
     // update the sorting indicator shown in the specified column (whose index
     // must be valid)
@@ -2477,6 +2491,10 @@ private:
     // the second one, so it's never necessary to call both of them.
     void SetNativeHeaderColCount();
     void SetNativeHeaderColOrder();
+
+    // Unlike the public SaveEditControlValue(), this method doesn't check if
+    // the edit control is shown, but just supposes that it is.
+    void DoSaveEditControlValue();
 
     // these sets contain the indices of fixed, i.e. non-resizable
     // interactively, grid rows or columns and are NULL if there are no fixed
