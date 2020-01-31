@@ -31,6 +31,8 @@
 #include <map>
 #include <string>
 
+#include <float.h>       // for FLT_MAX
+
 #define TRACE_CTFONT "ctfont"
 
 class WXDLLEXPORT wxFontRefData : public wxGDIRefData
@@ -288,6 +290,8 @@ void wxFontRefData::SetFont(CTFontRef font)
     dict.SetValue(kCTForegroundColorFromContextAttributeName, kCFBooleanTrue);
 
     m_ctFontAttributes = dict;
+
+    m_cgFont = CTFontCopyGraphicsFont(m_ctFont, NULL);
 }
 
 static const CGAffineTransform kSlantTransform = CGAffineTransformMake(1, 0, tan(wxDegToRad(11)), 1, 0, 0);
@@ -349,7 +353,6 @@ void wxFontRefData::Alloc()
             m_cgFont = CTFontCopyGraphicsFont(m_ctFont, NULL);
             entryWithSize.font = m_ctFont;
             entryWithSize.cgFont = m_cgFont;
-            entryWithSize.cgFont = m_cgFont;
             entryWithSize.fontAttributes = m_ctFontAttributes;
             entryWithSize.used = true;
         }
@@ -366,7 +369,7 @@ void wxFontRefData::Alloc()
             // emulate weigth if necessary
             int difference = m_info.GetNumericWeight() - CTWeightToWX(wxNativeFontInfo::GetCTWeight(font));
 
-            SetFont(font);
+            SetFont(font); // Sets m_ctFont, m_ctFontAttributes, m_cgFont
             if ( difference != 0 )
             {
                 if ( difference > 0 )
@@ -382,7 +385,6 @@ void wxFontRefData::Alloc()
                 }
             }
 
-            m_cgFont = CTFontCopyGraphicsFont(m_ctFont, NULL);
             entryWithSize.font = m_ctFont;
             entryWithSize.cgFont = m_cgFont;
             entryWithSize.fontAttributes = m_ctFontAttributes;
@@ -957,13 +959,13 @@ bool wxNativeFontInfo::FromString(const wxString& s)
     token = tokenizer.GetNextToken();
     if ( !token.ToCDouble(&d) )
         return false;
+    if ( d < 0 || d > FLT_MAX )
+        return false;
 #ifdef __LP64__
     // CGFloat is just double in this case.
     m_ctSize = d;
 #else // !__LP64__
     m_ctSize = static_cast<CGFloat>(d);
-    if ( static_cast<double>(m_ctSize) != d )
-        return false;
 #endif // __LP64__/!__LP64__
 
     token = tokenizer.GetNextToken();

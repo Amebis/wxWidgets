@@ -23,6 +23,10 @@ wx_option(wxBUILD_COMPATIBILITY
 set(wxBUILD_CUSTOM_SETUP_HEADER_PATH "" CACHE PATH "Include path containing custom wx/setup.h")
 mark_as_advanced(wxBUILD_CUSTOM_SETUP_HEADER_PATH)
 
+if(WIN32)
+    wx_option(wxUSE_DPI_AWARE_MANIFEST "DPI Awareness" "per-monitor" STRINGS "none" "system" "per-monitor")
+endif()
+
 wx_option(wxBUILD_DEBUG_LEVEL "Debug Level" Default STRINGS Default 0 1 2)
 mark_as_advanced(wxBUILD_DEBUG_LEVEL)
 
@@ -416,6 +420,7 @@ if(WIN32)
     wx_option(wxUSE_TASKBARICON_BALLOONS "enable wxTaskBarIcon::ShowBalloon() method (Win32 only)")
     wx_option(wxUSE_UXTHEME "enable support for Windows XP themed look (Win32 only)")
     wx_option(wxUSE_WEBVIEW_IE "use wxWebView IE backend (Win32 only)")
+    wx_option(wxUSE_WEBVIEW_EDGE "use wxWebView Edge (Chromium) backend (Windows 7+ only)" OFF)
     wx_option(wxUSE_WXDIB "use wxDIB class (Win32 only)")
     if(MSVC_VERSION GREATER 1600 AND NOT CMAKE_VS_PLATFORM_TOOLSET MATCHES "_xp$")
         set(wxUSE_WINRT_DEFAULT ON)

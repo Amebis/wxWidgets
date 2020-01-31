@@ -213,7 +213,9 @@ enum
            All items were deleted.
            Processes a @c wxEVT_LIST_DELETE_ALL_ITEMS event type.
     @event{EVT_LIST_ITEM_SELECTED(id, func)}
-           The item has been selected.
+           The item has been selected. Notice that the mouse is captured by the
+           control itself when this event is generated, see @ref
+           overview_events_with_mouse_capture "event handling overview".
            Processes a @c wxEVT_LIST_ITEM_SELECTED event type.
     @event{EVT_LIST_ITEM_DESELECTED(id, func)}
            The item has been deselected.
@@ -949,6 +951,16 @@ public:
                     int imageIndex);
 
     /**
+        Returns true if the control doesn't currently contain any items.
+
+        Note that the control with some columns is still considered to be empty
+        if it has no rows.
+
+        @since 3.1.3
+     */
+    bool IsEmpty() const;
+
+    /**
         Returns true if the control is currently in virtual report view.
      */
     bool IsVirtual() const;
@@ -1426,7 +1438,9 @@ protected:
     @event{EVT_LIST_DELETE_ALL_ITEMS(id, func)}
         Delete all items.
     @event{EVT_LIST_ITEM_SELECTED(id, func)}
-        The item has been selected.
+        The item has been selected. Notice that the mouse is captured by the
+        control itself when this event is generated, see @ref
+        overview_events_with_mouse_capture "event handling overview".
     @event{EVT_LIST_ITEM_DESELECTED(id, func)}
         The item has been deselected.
     @event{EVT_LIST_ITEM_ACTIVATED(id, func)}
@@ -1645,7 +1659,7 @@ public:
 
         @param parent
             Parent window. Must not be @NULL.
-        @param id
+        @param winid
             Window identifier. The value wxID_ANY indicates a default value.
         @param pos
             Window position.
@@ -1769,7 +1783,7 @@ public:
       This is a bitlist of the following flags:
         - @c wxLIST_STATE_FOCUSED: The item has the focus.
         - @c wxLIST_STATE_SELECTED: The item is selected.
-        - @c wxLIST_STATE_DONTCARE: Don't care what the state is. Win32 only.
+        - @c wxLIST_STATE_DONTCARE: No special flags (the value of this constant is 0).
         - @c wxLIST_STATE_DROPHILITED: The item is highlighted to receive a drop event. Win32 only.
         - @c wxLIST_STATE_CUT: The item is in the cut state. Win32 only.
     - A mask indicating which state flags are valid; this is a bitlist of the
@@ -1861,7 +1875,7 @@ public:
         Returns a bit field representing the state of the item.
 
         Can be any combination of:
-        - wxLIST_STATE_DONTCARE: Don't care what the state is. Win32 only.
+        - wxLIST_STATE_DONTCARE: No special flags (the values of this constant is 0).
         - wxLIST_STATE_DROPHILITED: The item is highlighted to receive a drop event. Win32 only.
         - wxLIST_STATE_FOCUSED: The item has the focus.
         - wxLIST_STATE_SELECTED: The item is selected.

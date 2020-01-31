@@ -124,6 +124,7 @@ protected:
     virtual void DoSetSize(int x, int y,
                            int width, int height,
                            int sizeFlags = wxSIZE_AUTO) wxOVERRIDE;
+    virtual void MSWUpdateFontOnDPIChange(const wxSize& newDPI) wxOVERRIDE;
 
 private:
     // override MSW-specific methods needed for new control
@@ -324,6 +325,16 @@ wxSize wxMSWHeaderCtrl::DoGetBestSize() const
     return wxSize(wxDefaultCoord, wpos.cy);
 }
 
+void wxMSWHeaderCtrl::MSWUpdateFontOnDPIChange(const wxSize& newDPI)
+{
+    wxControl::MSWUpdateFontOnDPIChange(newDPI);
+
+    if ( wxMSWHeaderCtrlCustomDraw * customDraw = GetCustomDraw() )
+    {
+        customDraw->m_attr.SetFont(m_font);
+    }
+}
+
 // ----------------------------------------------------------------------------
 // wxMSWHeaderCtrl columns managements
 // ----------------------------------------------------------------------------
@@ -469,13 +480,11 @@ void wxMSWHeaderCtrl::DoInsertItem(const wxHeaderColumn& col, unsigned int idx)
 
     if ( col.GetAlignment() != wxALIGN_NOT )
     {
-        hdi.mask |= HDI_FORMAT | HDF_LEFT;
+        hdi.mask |= HDI_FORMAT;
+
+        // wxALIGN_LEFT is the same as wxALIGN_NOT
         switch ( col.GetAlignment() )
         {
-            case wxALIGN_LEFT:
-                hdi.fmt |= HDF_LEFT;
-                break;
-
             case wxALIGN_CENTER:
             case wxALIGN_CENTER_HORIZONTAL:
                 hdi.fmt |= HDF_CENTER;
@@ -531,6 +540,13 @@ void wxMSWHeaderCtrl::DoInsertItem(const wxHeaderColumn& col, unsigned int idx)
 
 void wxMSWHeaderCtrl::SetColumnsOrder(const wxArrayInt& order)
 {
+    // This can happen if we don't have any columns at all and "order" is empty
+    // anyhow in this case, so we don't have anything to do (note that we
+    // already know that the input array contains m_numColumns elements, as
+    // it's checked by the public SetColumnsOrder()).
+    if ( !m_numColumns )
+        return;
+
     wxArrayInt orderShown;
     orderShown.reserve(m_numColumns);
 
@@ -701,7 +717,7 @@ bool wxMSWHeaderCtrl::SetFont(const wxFont& font)
 
     if ( wxMSWHeaderCtrlCustomDraw* customDraw = GetCustomDraw() )
     {
-        customDraw->m_attr.SetFont(font);
+        customDraw->m_attr.SetFont(m_font);
     }
 
     return true;
@@ -1032,9 +1048,11 @@ bool wxHeaderCtrl::Create(wxWindow *parent,
                                   wxID_ANY,
                                   wxDefaultPosition,
                                   wxDefaultSize,
-                                  ApplyHeaderReorderFlagToStyle(wxNO_BORDER),
+                                  wxNO_BORDER,
                                   wxMSWHeaderCtrlNameStr) )
         return false;
+
+    SetWindowStyle(newStyle);
 
     Bind(wxEVT_SIZE, &wxHeaderCtrl::OnSize, this);
 
@@ -1120,16 +1138,18 @@ void wxHeaderCtrl::SetWindowStyleFlag(long style)
 
     // Update the native control style.
     long flags = m_nativeControl->GetWindowStyleFlag();
-    flags = ApplyHeaderReorderFlagToStyle(flags);
-    m_nativeControl->SetWindowStyleFlag(flags);
-}
 
-long wxHeaderCtrl::ApplyHeaderReorderFlagToStyle(long style)
-{
     if ( HasFlag(wxHD_ALLOW_REORDER) )
-        return style | wxHD_ALLOW_REORDER;
+        flags |= wxHD_ALLOW_REORDER;
+    else
+        flags &= ~wxHD_ALLOW_REORDER;
 
-    return style & ~wxHD_ALLOW_REORDER;
+    if ( HasFlag(wxHD_BITMAP_ON_RIGHT) )
+        flags |= wxHD_BITMAP_ON_RIGHT;
+    else
+        flags &= ~wxHD_BITMAP_ON_RIGHT;
+
+    m_nativeControl->SetWindowStyleFlag(flags);
 }
 
 #endif // wxHAS_GENERIC_HEADERCTRL

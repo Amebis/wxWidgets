@@ -193,7 +193,7 @@ int wxDataViewColumn::GetWidth() const
     switch ( m_width )
     {
         case wxCOL_WIDTH_DEFAULT:
-            return wxDVC_DEFAULT_WIDTH;
+            return wxWindow::FromDIP(wxDVC_DEFAULT_WIDTH, m_owner);
 
         case wxCOL_WIDTH_AUTOSIZE:
             wxCHECK_MSG( m_owner, wxDVC_DEFAULT_WIDTH, "no owner control" );
@@ -202,6 +202,14 @@ int wxDataViewColumn::GetWidth() const
         default:
             return m_width;
     }
+}
+
+void wxDataViewColumn::WXOnResize(int width)
+{
+    m_width =
+    m_manuallySetWidth = width;
+
+    m_owner->OnColumnResized();
 }
 
 void wxDataViewColumn::UpdateDisplay()
@@ -401,8 +409,7 @@ private:
         wxDataViewCtrl * const owner = GetOwner();
 
         const unsigned col = event.GetColumn();
-        owner->GetColumn(col)->SetWidth(event.GetWidth());
-        GetOwner()->OnColumnChange(col);
+        owner->GetColumn(col)->WXOnResize(event.GetWidth());
     }
 
     void OnEndReorder(wxHeaderCtrlEvent& event)
@@ -709,14 +716,18 @@ public:
     bool Cleared();
     void Resort()
     {
-        if ( m_rowHeightCache )
-            m_rowHeightCache->Clear();
+        ClearRowHeightCache();
 
         if (!IsVirtualList())
         {
             m_root->Resort(this);
         }
         UpdateDisplay();
+    }
+    void ClearRowHeightCache()
+    {
+        if ( m_rowHeightCache )
+            m_rowHeightCache->Clear();
     }
 
     SortOrder GetSortOrder() const
@@ -1188,7 +1199,8 @@ wxSize wxDataViewTextRenderer::GetSize() const
         return GetTextExtent(m_text);
     }
     else
-        return wxSize(wxDVC_DEFAULT_RENDERER_SIZE,wxDVC_DEFAULT_RENDERER_SIZE);
+        return GetView()->FromDIP(wxSize(wxDVC_DEFAULT_RENDERER_SIZE,
+                                         wxDVC_DEFAULT_RENDERER_SIZE));
 }
 
 // ---------------------------------------------------------
@@ -1251,7 +1263,8 @@ wxSize wxDataViewBitmapRenderer::GetSize() const
     else if (m_icon.IsOk())
         return wxSize( m_icon.GetWidth(), m_icon.GetHeight() );
 
-    return wxSize(wxDVC_DEFAULT_RENDERER_SIZE,wxDVC_DEFAULT_RENDERER_SIZE);
+    return GetView()->FromDIP(wxSize(wxDVC_DEFAULT_RENDERER_SIZE,
+                                     wxDVC_DEFAULT_RENDERER_SIZE));
 }
 
 // ---------------------------------------------------------
@@ -2770,11 +2783,8 @@ bool wxDataViewMainWindow::ItemAdded(const wxDataViewItem & parent, const wxData
     }
     else
     {
-        if ( m_rowHeightCache )
-        {
-            // specific position (row) is unclear, so clear whole height cache
-            m_rowHeightCache->Clear();
-        }
+        // specific position (row) is unclear, so clear whole height cache
+        ClearRowHeightCache();
 
         wxDataViewTreeNode *parentNode = FindNode(parent);
 
@@ -3039,8 +3049,7 @@ bool wxDataViewMainWindow::Cleared()
     m_selection.Clear();
     m_currentRow = (unsigned)-1;
 
-    if ( m_rowHeightCache )
-        m_rowHeightCache->Clear();
+    ClearRowHeightCache();
 
     if (GetModel())
     {
@@ -5068,9 +5077,36 @@ void wxDataViewMainWindow::UpdateColumnSizes()
 
     int fullWinWidth = GetSize().x;
 
-    wxDataViewColumn *lastCol = owner->GetColumn(colsCount - 1);
-    int colswidth = GetEndOfLastCol();
-    int lastColX = colswidth - lastCol->GetWidth();
+    // Find the last shown column: we shouldn't bother to resize the columns
+    // that are hidden anyhow.
+    int lastColIndex = -1;
+    wxDataViewColumn *lastCol wxDUMMY_INITIALIZE(NULL);
+    for ( int colIndex = colsCount - 1; colIndex >= 0; --colIndex )
+    {
+        lastCol = owner->GetColumnAt(colIndex);
+        if ( !lastCol->IsHidden() )
+        {
+            lastColIndex = colIndex;
+            break;
+        }
+    }
+
+    if ( lastColIndex == -1 )
+    {
+        // All columns are hidden.
+        return;
+    }
+
+    int lastColX = 0;
+    for ( int colIndex = 0; colIndex < lastColIndex; ++colIndex )
+    {
+        const wxDataViewColumn *c = owner->GetColumnAt(colIndex);
+
+        if ( !c->IsHidden() )
+            lastColX += c->GetWidth();
+    }
+
+    int colswidth = lastColX + lastCol->GetWidth();
     if ( lastColX < fullWinWidth )
     {
         const int availableWidth = fullWinWidth - lastColX;
@@ -5107,6 +5143,7 @@ void wxDataViewMainWindow::UpdateColumnSizes()
 wxIMPLEMENT_DYNAMIC_CLASS(wxDataViewCtrl, wxDataViewCtrlBase);
 wxBEGIN_EVENT_TABLE(wxDataViewCtrl, wxDataViewCtrlBase)
     EVT_SIZE(wxDataViewCtrl::OnSize)
+    EVT_DPI_CHANGED(wxDataViewCtrl::OnDPIChanged)
 wxEND_EVENT_TABLE()
 
 wxDataViewCtrl::~wxDataViewCtrl()
@@ -5248,6 +5285,28 @@ void wxDataViewCtrl::OnSize( wxSizeEvent &WXUNUSED(event) )
             m_headerArea->GetSize().y <= m_headerArea->GetBestSize(). y )
     {
         m_headerArea->Refresh();
+    }
+}
+
+void wxDataViewCtrl::OnDPIChanged(wxDPIChangedEvent& event)
+{
+    if ( m_clientArea )
+    {
+        m_clientArea->ClearRowHeightCache();
+        m_clientArea->SetRowHeight(m_clientArea->GetDefaultRowHeight());
+    }
+
+    for ( unsigned i = 0; i < m_cols.size(); ++i )
+    {
+        int minWidth = m_cols[i]->GetMinWidth();
+        if ( minWidth > 0 )
+            minWidth = minWidth * event.GetNewDPI().x / event.GetOldDPI().x;
+        m_cols[i]->SetMinWidth(minWidth);
+
+        int width = m_cols[i]->WXGetManuallySetWidth();
+        if ( width > 0 )
+            width = width * event.GetNewDPI().x / event.GetOldDPI().x;
+        m_cols[i]->SetWidth(width);
     }
 }
 
@@ -5401,6 +5460,11 @@ bool wxDataViewCtrl::InsertColumn( unsigned int pos, wxDataViewColumn *col )
     m_colsBestWidths.insert(m_colsBestWidths.begin() + pos, CachedColWidthInfo());
     OnColumnsCountChanged();
     return true;
+}
+
+void wxDataViewCtrl::OnColumnResized()
+{
+    m_clientArea->UpdateDisplay();
 }
 
 void wxDataViewCtrl::OnColumnWidthChange(unsigned int idx)

@@ -402,6 +402,12 @@ void MyFrame::OnToggleMacUseGeneric(wxCommandEvent& event)
 
 void MyFrame::OnGoTo(wxCommandEvent& WXUNUSED(event))
 {
+    if ( m_listCtrl->IsEmpty() )
+    {
+        wxLogMessage("Attempt go to item #3 when list is empty");
+        return;
+    }
+
     long index = 3;
     m_listCtrl->SetItemState(index, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
 
@@ -426,7 +432,14 @@ void MyFrame::OnFocusLast(wxCommandEvent& WXUNUSED(event))
 
 void MyFrame::OnToggleFirstSel(wxCommandEvent& WXUNUSED(event))
 {
-    m_listCtrl->SetItemState(0, (~m_listCtrl->GetItemState(0, wxLIST_STATE_SELECTED) ) & wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+    if ( !m_listCtrl->IsEmpty() )
+    { 
+        m_listCtrl->SetItemState(0, (~m_listCtrl->GetItemState(0, wxLIST_STATE_SELECTED) ) & wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+    }
+    else
+    {
+        wxLogMessage("Attempt toggle first item when list is empty");
+    }
 }
 
 void MyFrame::OnDeselectAll(wxCommandEvent& WXUNUSED(event))
@@ -1543,7 +1556,8 @@ void MyListCtrl::OnContextMenu(wxContextMenuEvent& event)
         {
             point = ScreenToClient(point);
         }
-        ShowContextMenu(point);
+        int flags;
+        ShowContextMenu(point, HitTest(point, flags));
     }
     else
     {
@@ -1555,10 +1569,10 @@ void MyListCtrl::OnContextMenu(wxContextMenuEvent& event)
 }
 #endif
 
-void MyListCtrl::ShowContextMenu(const wxPoint& pos)
+void MyListCtrl::ShowContextMenu(const wxPoint& pos, long item)
 {
     wxMenu menu;
-
+    menu.Append(wxID_ANY, wxString::Format("Menu for item %ld", item));
     menu.Append(wxID_ABOUT, "&About");
     menu.AppendSeparator();
     menu.Append(wxID_EXIT, "E&xit");

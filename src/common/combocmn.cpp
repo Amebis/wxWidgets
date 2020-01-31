@@ -1374,7 +1374,7 @@ void wxComboCtrlBase::PositionTextCtrl( int textCtrlXAdjust, int textCtrlYAdjust
 
 wxSize wxComboCtrlBase::DoGetBestSize() const
 {
-    int width = m_text ? m_text->GetBestSize().x : 80;
+    int width = m_text ? m_text->GetBestSize().x : FromDIP(80);
 
     return GetSizeFromTextSize(width);
 }
@@ -1533,6 +1533,37 @@ bool wxComboCtrlBase::SetFont ( const wxFont& font )
     }
 
     return true;
+}
+
+#if wxUSE_TOOLTIPS
+void wxComboCtrlBase::DoSetToolTip(wxToolTip *tooltip)
+{
+    wxControl::DoSetToolTip(tooltip);
+
+    // Set tool tip for button and text box
+    if ( tooltip )
+    {
+        const wxString &tip = tooltip->GetTip();
+        if ( m_text ) m_text->SetToolTip(tip);
+        if ( m_btn ) m_btn->SetToolTip(tip);
+    }
+    else
+    {
+        if ( m_text ) m_text->SetToolTip( NULL );
+        if ( m_btn ) m_btn->SetToolTip( NULL );
+    }
+}
+#endif // wxUSE_TOOLTIPS
+
+bool wxComboCtrlBase::SetForegroundColour(const wxColour& colour)
+{
+    if ( wxControl::SetForegroundColour(colour) )
+    {
+        if ( m_text )
+            m_text->SetForegroundColour(colour);
+        return true;
+    }
+    return false;
 }
 
 bool wxComboCtrlBase::SetBackgroundColour(const wxColour& colour)
@@ -2715,16 +2746,6 @@ void wxComboCtrlBase::SetTextCtrlStyle( int style )
 
     if ( m_text )
         m_text->SetWindowStyle(style);
-}
-
-wxWindowList wxComboCtrlBase::GetCompositeWindowParts() const
-{
-    wxWindowList parts;
-    if ( m_text )
-        parts.push_back(m_text);
-    if ( m_btn )
-        parts.push_back(m_btn);
-    return parts;
 }
 
 // ----------------------------------------------------------------------------

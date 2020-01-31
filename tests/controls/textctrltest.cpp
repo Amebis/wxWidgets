@@ -27,6 +27,11 @@
 #include "wx/scopeguard.h"
 #include "wx/uiaction.h"
 
+#if wxUSE_CLIPBOARD
+    #include "wx/clipbrd.h"
+    #include "wx/dataobj.h"
+#endif // wxUSE_CLIPBOARD
+
 #ifdef __WXGTK__
     #include "wx/stopwatch.h"
 #endif
@@ -83,7 +88,9 @@ private:
         CPPUNIT_TEST( Style );
         CPPUNIT_TEST( FontStyle );
         CPPUNIT_TEST( Lines );
+#if wxUSE_LOG
         CPPUNIT_TEST( LogTextCtrl );
+#endif // wxUSE_LOG
         CPPUNIT_TEST( LongText );
         CPPUNIT_TEST( PositionToCoords );
         CPPUNIT_TEST( PositionToCoordsRich );
@@ -114,7 +121,9 @@ private:
     void Style();
     void FontStyle();
     void Lines();
+#if wxUSE_LOG
     void LogTextCtrl();
+#endif // wxUSE_LOG
     void LongText();
     void PositionToCoords();
     void PositionToCoordsRich();
@@ -604,6 +613,7 @@ void TextCtrlTestCase::Lines()
 #endif
 }
 
+#if wxUSE_LOG
 void TextCtrlTestCase::LogTextCtrl()
 {
     CPPUNIT_ASSERT(m_text->IsEmpty());
@@ -618,6 +628,7 @@ void TextCtrlTestCase::LogTextCtrl()
 
     CPPUNIT_ASSERT(!m_text->IsEmpty());
 }
+#endif // wxUSE_LOG
 
 void TextCtrlTestCase::LongText()
 {
@@ -1340,5 +1351,75 @@ TEST_CASE("wxTextCtrl::GetBestSize", "[wxTextCtrl][best-size]")
     // that should still have the same best size.
     CHECK( sizeVeryLong.y == sizeLong.y );
 }
+
+#if wxUSE_CLIPBOARD
+
+TEST_CASE("wxTextCtrl::LongPaste", "[wxTextCtrl][clipboard][paste]")
+{
+    long style = 0;
+
+    SECTION("Plain")
+    {
+        style = wxTE_MULTILINE;
+    }
+
+    // wxTE_RICH[2] style only makes any different under MSW, so don't bother
+    // testing it under the other platforms.
+#ifdef __WXMSW__
+    SECTION("Rich")
+    {
+        style = wxTE_MULTILINE | wxTE_RICH;
+    }
+
+    SECTION("Rich v2")
+    {
+        style = wxTE_MULTILINE | wxTE_RICH2;
+    }
+#endif // __WXMSW__
+
+    if ( !style )
+    {
+        // This can happen when explicitly selecting just a single section to
+        // execute -- this code still runs even if the corresponding section is
+        // skipped, so we have to explicitly skip it too in this case.
+        return;
+    }
+
+    wxScopedPtr<wxTextCtrl>
+        text(new wxTextCtrl(wxTheApp->GetTopWindow(), wxID_ANY, wxString(),
+                            wxDefaultPosition, wxDefaultSize, style));
+
+    // This could actually be much higher, but it makes the test proportionally
+    // slower, so use a relatively small (but still requiring more space than
+    // the default maximum length under MSW) number here.
+    const int NUM_LINES = 10000;
+
+    {
+        wxClipboardLocker lock;
+
+        // Build a longish string.
+        wxString s;
+        s.reserve(NUM_LINES*5 + 10);
+        for ( int n = 0; n < NUM_LINES; ++n )
+        {
+            s += wxString::Format("%04d\n", n);
+        }
+
+        s += "THE END";
+
+        wxTheClipboard->AddData(new wxTextDataObject(s));
+    }
+
+    text->ChangeValue("THE BEGINNING\n");
+    text->SetInsertionPointEnd();
+    text->Paste();
+
+    const int numLines = text->GetNumberOfLines();
+
+    CHECK( numLines == NUM_LINES + 2 );
+    CHECK( text->GetLineText(numLines - 1) == "THE END" );
+}
+
+#endif // wxUSE_CLIPBOARD
 
 #endif //wxUSE_TEXTCTRL

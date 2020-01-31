@@ -185,7 +185,6 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     src/osx/core/cfstring.cpp
     src/osx/core/evtloop_cf.cpp
     src/osx/core/strconv_cf.cpp
-    src/osx/core/utilsexc_base.cpp
     src/osx/cocoa/utils_base.mm
     src/osx/core/secretstore.cpp
 </set>
@@ -1517,6 +1516,7 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     src/gtk/dataview.cpp
     src/gtk/bmpcbox.cpp
     src/gtk/animate.cpp
+    src/gtk/srchctrl.cpp
 </set>
 <set var="GTK2_SRC" hints="files">
     $(GTK_SRC)
@@ -1586,6 +1586,7 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     wx/gtk/bmpcbox.h
     wx/gtk/dataview.h
     wx/gtk/dvrenderer.h
+    wx/gtk/srchctrl.h
 </set>
 <set var="GTK2_HDR" hints="files">
     $(GTK_HDR)
@@ -3014,7 +3015,10 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
 <!-- ====================================================================== -->
 
 <set var="WEBVIEW_SRC_PLATFORM">
-    <if cond="TOOLKIT=='MSW'">src/msw/webview_ie.cpp</if>
+    <if cond="TOOLKIT=='MSW'">
+        src/msw/webview_ie.cpp
+        src/msw/webview_edge.cpp
+    </if>
     <if cond="TOOLKIT=='GTK'">
         src/gtk/webview_webkit.cpp
         src/gtk/webview_webkit2.cpp
@@ -3035,7 +3039,7 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     <if cond="TOOLKIT=='MSW'">
         wx/msw/webviewhistoryitem_ie.h
         wx/msw/webview_ie.h
-        wx/msw/webview_missing.h
+        wx/msw/webview_edge.h
     </if>
     <if cond="TOOLKIT=='GTK'">
         wx/gtk/webviewhistoryitem_webkit.h
@@ -3096,6 +3100,7 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     src/xrc/xh_grid.cpp
     src/xrc/xh_html.cpp
     src/xrc/xh_hyperlink.cpp
+    src/xrc/xh_infobar.cpp
     src/xrc/xh_listb.cpp
     src/xrc/xh_listbk.cpp
     src/xrc/xh_listc.cpp
@@ -3168,6 +3173,7 @@ IMPORTANT: please read docs/tech/tn0016.txt before modifying this file!
     wx/xrc/xh_grid.h
     wx/xrc/xh_html.h
     wx/xrc/xh_hyperlink.h
+    wx/xrc/xh_infobar.h
     wx/xrc/xh_listb.h
     wx/xrc/xh_listbk.h
     wx/xrc/xh_listc.h

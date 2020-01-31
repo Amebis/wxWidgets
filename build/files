@@ -139,7 +139,6 @@ BASE_COREFOUNDATION_SRC =
     src/osx/core/evtloop_cf.cpp
     src/osx/core/secretstore.cpp
     src/osx/core/strconv_cf.cpp
-    src/osx/core/utilsexc_base.cpp
     src/osx/cocoa/utils_base.mm
 
 BASE_COREFOUNDATION_HDR =
@@ -1400,6 +1399,7 @@ GTK_SRC =
     src/gtk/slider.cpp
     src/gtk/spinbutt.cpp
     src/gtk/spinctrl.cpp
+    src/gtk/srchctrl.cpp
     src/gtk/statbmp.cpp
     src/gtk/statbox.cpp
     src/gtk/statline.cpp
@@ -1470,6 +1470,7 @@ GTK_HDR =
     wx/gtk/slider.h
     wx/gtk/spinbutt.h
     wx/gtk/spinctrl.h
+    wx/gtk/srchctrl.h
     wx/gtk/statbmp.h
     wx/gtk/statbox.h
     wx/gtk/statline.h
@@ -2787,6 +2788,7 @@ HTML_CMN_HDR =
 
 WEBVIEW_MSW_SRC =
     src/msw/webview_ie.cpp
+    src/msw/webview_edge.cpp
 WEBVIEW_CMN_SRC =
     src/common/webview.cpp
     src/common/webviewarchivehandler.cpp
@@ -2795,7 +2797,7 @@ WEBVIEW_CMN_SRC =
 WEBVIEW_MSW_HDR =
     wx/msw/webviewhistoryitem_ie.h
     wx/msw/webview_ie.h
-    wx/msw/webview_missing.h
+    wx/msw/webview_edge.h
 WEBVIEW_CMN_HDR =
     wx/webview.h
     wx/webviewarchivehandler.h
@@ -2855,6 +2857,7 @@ XRC_SRC =
     src/xrc/xh_grid.cpp
     src/xrc/xh_html.cpp
     src/xrc/xh_hyperlink.cpp
+    src/xrc/xh_infobar.cpp
     src/xrc/xh_listb.cpp
     src/xrc/xh_listbk.cpp
     src/xrc/xh_listc.cpp
@@ -2926,6 +2929,7 @@ XRC_HDR =
     wx/xrc/xh_grid.h
     wx/xrc/xh_html.h
     wx/xrc/xh_hyperlink.h
+    wx/xrc/xh_infobar.h
     wx/xrc/xh_listb.h
     wx/xrc/xh_listbk.h
     wx/xrc/xh_listc.h

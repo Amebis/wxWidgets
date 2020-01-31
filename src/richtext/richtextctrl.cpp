@@ -343,7 +343,7 @@ bool wxRichTextCtrl::Create( wxWindow* parent, wxWindowID id, const wxString& va
 #if wxUSE_DRAG_AND_DROP
     SetDropTarget(new wxRichTextDropTarget(this));
 #endif
-
+    SetModified( false );
     return true;
 }
 
@@ -3808,7 +3808,7 @@ void wxRichTextCtrl::OnDropFiles(wxDropFilesEvent& event)
 
 wxSize wxRichTextCtrl::DoGetBestSize() const
 {
-    return wxSize(10, 10);
+    return FromDIP(wxSize(10, 10));
 }
 
 // ----------------------------------------------------------------------------

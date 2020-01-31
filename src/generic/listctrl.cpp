@@ -1211,35 +1211,9 @@ void wxListHeaderWindow::OnInternalIdle()
 
 void wxListHeaderWindow::DrawCurrent()
 {
-#if 1
-    // m_owner->SetColumnWidth( m_column, m_currentX - m_minX );
     m_sendSetColumnWidth = true;
     m_colToSend = m_column;
     m_widthToSend = m_currentX - m_minX;
-#else
-    int x1 = m_currentX;
-    int y1 = 0;
-    m_owner->ClientToScreen( &x1, &y1 );
-
-    int x2 = m_currentX;
-    int y2 = 0;
-    m_owner->GetClientSize( NULL, &y2 );
-    m_owner->ClientToScreen( &x2, &y2 );
-
-    wxScreenDC dc;
-    dc.SetLogicalFunction( wxINVERT );
-    dc.SetPen( wxPen(*wxBLACK, 2) );
-    dc.SetBrush( *wxTRANSPARENT_BRUSH );
-
-    AdjustDC(dc);
-
-    dc.DrawLine( x1, y1, x2, y2 );
-
-    dc.SetLogicalFunction( wxCOPY );
-
-    dc.SetPen( wxNullPen );
-    dc.SetBrush( wxNullBrush );
-#endif
 }
 
 void wxListHeaderWindow::OnMouse( wxMouseEvent &event )
@@ -1358,6 +1332,15 @@ void wxListHeaderWindow::OnMouse( wxMouseEvent &event )
                                     : wxEVT_LIST_COL_RIGHT_CLICK,
                                 event.GetPosition());
             }
+        }
+        else if ( event.LeftDClick() && hit_border )
+        {
+            // Autosize the column when the divider is clicked: if there are
+            // any items, fit the columns to its contents, otherwise just fit
+            // it to its label width.
+            parent->SetColumnWidth(m_column,
+                                   parent->IsEmpty() ? wxLIST_AUTOSIZE_USEHEADER
+                                                     : wxLIST_AUTOSIZE);
         }
         else if (event.Moving())
         {
@@ -2985,6 +2968,12 @@ void wxListMainWindow::OnChar( wxKeyEvent &event )
 
         case WXK_RETURN:
         case WXK_EXECUTE:
+            if ( event.HasModifiers() )
+            {
+                event.Skip();
+                break;
+            }
+
             SendNotify( m_current, wxEVT_LIST_ITEM_ACTIVATED );
             break;
 
@@ -5473,7 +5462,7 @@ bool wxGenericListCtrl::SetForegroundColour( const wxColour &colour )
 
 bool wxGenericListCtrl::SetFont( const wxFont &font )
 {
-    if ( !wxWindow::SetFont( font ) )
+    if (!BaseType::SetFont(font))
         return false;
 
     if (m_mainWin)

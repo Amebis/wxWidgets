@@ -543,8 +543,6 @@ void wxGCDCImpl::SetBrush( const wxBrush &brush )
 void wxGCDCImpl::SetBackground( const wxBrush &brush )
 {
     m_backgroundBrush = brush;
-    if (!m_backgroundBrush.IsOk())
-        return;
 }
 
 void wxGCDCImpl::SetLogicalFunction( wxRasterOperationMode function )
@@ -1198,13 +1196,19 @@ void wxGCDCImpl::DoDrawText(const wxString& str, wxCoord x, wxCoord y)
     if ( str.empty() )
         return;
 
-    if ( !m_logicalFunctionSupported )
-        return;
+    // Text drawing shouldn't be affected by the raster operation
+    // mode set by SetLogicalFunction() and should be always done
+    // in the default wxCOPY mode (which is wxCOMPOSITION_OVER
+    // composition mode).
+    wxCompositionMode curMode = m_graphicContext->GetCompositionMode();
+    m_graphicContext->SetCompositionMode(wxCOMPOSITION_OVER);
 
     if ( m_backgroundMode == wxBRUSHSTYLE_TRANSPARENT )
         m_graphicContext->DrawText( str, x ,y);
     else
         m_graphicContext->DrawText( str, x ,y , m_graphicContext->CreateBrush(m_textBackgroundColour) );
+
+    m_graphicContext->SetCompositionMode(curMode);
 
     wxCoord w, h;
     GetOwner()->GetTextExtent(str, &w, &h);
@@ -1266,7 +1270,7 @@ bool wxGCDCImpl::DoGetPartialTextExtents(const wxString& text, wxArrayInt& width
     return true;
 }
 
-wxCoord wxGCDCImpl::GetCharWidth(void) const
+wxCoord wxGCDCImpl::GetCharWidth() const
 {
     wxCoord width = 0;
     DoGetTextExtent( wxT("g") , &width , NULL , NULL , NULL , NULL );
@@ -1274,7 +1278,7 @@ wxCoord wxGCDCImpl::GetCharWidth(void) const
     return width;
 }
 
-wxCoord wxGCDCImpl::GetCharHeight(void) const
+wxCoord wxGCDCImpl::GetCharHeight() const
 {
     wxCoord height = 0;
     DoGetTextExtent( wxT("g") , NULL , &height , NULL , NULL , NULL );
@@ -1282,32 +1286,27 @@ wxCoord wxGCDCImpl::GetCharHeight(void) const
     return height;
 }
 
-void wxGCDCImpl::Clear(void)
+void wxGCDCImpl::Clear()
 {
     wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::Clear - invalid DC") );
 
-    if ( m_backgroundBrush.IsOk() )
-    {
-        m_graphicContext->SetBrush( m_backgroundBrush );
-        wxPen p = *wxTRANSPARENT_PEN;
-        m_graphicContext->SetPen( p );
-        wxCompositionMode formerMode = m_graphicContext->GetCompositionMode();
-        m_graphicContext->SetCompositionMode(wxCOMPOSITION_SOURCE);
+    if ( m_backgroundBrush.IsTransparent() )
+        return;
 
-        double x, y, w, h;
-        m_graphicContext->GetClipBox(&x, &y, &w, &h);
-        m_graphicContext->DrawRectangle(x, y, w, h);
+    m_graphicContext->SetBrush( m_backgroundBrush.IsOk() ? m_backgroundBrush
+                                                         : *wxWHITE_BRUSH );
+    wxPen p = *wxTRANSPARENT_PEN;
+    m_graphicContext->SetPen( p );
+    wxCompositionMode formerMode = m_graphicContext->GetCompositionMode();
+    m_graphicContext->SetCompositionMode(wxCOMPOSITION_SOURCE);
 
-        m_graphicContext->SetCompositionMode(formerMode);
-        m_graphicContext->SetPen( m_pen );
-        m_graphicContext->SetBrush( m_brush );
-    }
-    else
-    {
-        double x, y, w, h;
-        m_graphicContext->GetClipBox(&x, &y, &w, &h);
-        m_graphicContext->ClearRectangle(x, y, w, h);
-    }
+    double x, y, w, h;
+    m_graphicContext->GetClipBox(&x, &y, &w, &h);
+    m_graphicContext->DrawRectangle(x, y, w, h);
+
+    m_graphicContext->SetCompositionMode(formerMode);
+    m_graphicContext->SetPen( m_pen );
+    m_graphicContext->SetBrush( m_brush );
 }
 
 void wxGCDCImpl::DoGetSize(int *width, int *height) const

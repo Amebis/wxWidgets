@@ -15,6 +15,8 @@
 
 #if wxUSE_GRID
 
+#include "wx/headerctrl.h"
+
 // Internally used (and hence intentionally not exported) event telling wxGrid
 // to hide the currently shown editor.
 wxDECLARE_EVENT( wxEVT_GRID_HIDE_EDITOR, wxCommandEvent );
@@ -95,7 +97,7 @@ public:
     virtual wxString GetTitle() const wxOVERRIDE { return m_grid->GetColLabelValue(m_col); }
     virtual wxBitmap GetBitmap() const wxOVERRIDE { return wxNullBitmap; }
     virtual int GetWidth() const wxOVERRIDE { return m_grid->GetColSize(m_col); }
-    virtual int GetMinWidth() const wxOVERRIDE { return m_grid->GetColMinimalAcceptableWidth(); }
+    virtual int GetMinWidth() const wxOVERRIDE { return m_grid->GetColMinimalWidth(m_col); }
     virtual wxAlignment GetAlignment() const wxOVERRIDE
     {
         int horz,
@@ -191,11 +193,9 @@ private:
     }
 
     // override to implement column auto sizing
-    virtual bool UpdateColumnWidthToFit(unsigned int idx, int widthTitle) wxOVERRIDE
+    virtual bool UpdateColumnWidthToFit(unsigned int idx, int WXUNUSED(widthTitle)) wxOVERRIDE
     {
-        // TODO: currently grid doesn't support computing the column best width
-        //       from its contents so we just use the best label width as is
-        GetOwner()->SetColSize(idx, widthTitle);
+        GetOwner()->HandleColumnAutosize(idx, GetDummyMouseEvent());
 
         return true;
     }
@@ -1006,6 +1006,17 @@ public:
 private:
     wxGridDataTypeInfoArray m_typeinfo;
 };
+
+// Returns the rectangle for showing something of the given size in a cell with
+// the given alignment.
+//
+// The function is used by wxGridCellBoolEditor and wxGridCellBoolRenderer to
+// draw a check mark and position wxCheckBox respectively.
+wxRect
+wxGetContentRect(wxSize contentSize,
+                 const wxRect& cellRect,
+                 int hAlign,
+                 int vAlign);
 
 #endif // wxUSE_GRID
 #endif // _WX_GENERIC_GRID_PRIVATE_H_

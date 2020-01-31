@@ -26,6 +26,7 @@
     #include "wx/math.h"
 #endif
 
+#include "wx/display.h"
 #include "wx/dnd.h"
 #include "wx/tooltip.h"
 #include "wx/caret.h"
@@ -444,7 +445,7 @@ static gboolean expose_event(GtkWidget*, GdkEventExpose* gdk_event, wxWindow* wi
 extern "C" {
 static gboolean
 #ifdef __WXGTK3__
-draw_border(GtkWidget*, cairo_t* cr, wxWindow* win)
+draw_border(GtkWidget* widget, cairo_t* cr, wxWindow* win)
 #else
 draw_border(GtkWidget* widget, GdkEventExpose* gdk_event, wxWindow* win)
 #endif
@@ -461,10 +462,20 @@ draw_border(GtkWidget* widget, GdkEventExpose* gdk_event, wxWindow* win)
 
     GtkAllocation alloc;
     gtk_widget_get_allocation(win->m_wxwindow, &alloc);
-    const int x = alloc.x;
-    const int y = alloc.y;
+    int x = alloc.x;
+    int y = alloc.y;
     const int w = alloc.width;
     const int h = alloc.height;
+#ifdef __WXGTK3__
+    if (!gtk_widget_get_has_window(widget))
+    {
+        // cairo_t origin is set to widget's origin, need to adjust
+        // coordinates for child when they are not relative to parent
+        gtk_widget_get_allocation(widget, &alloc);
+        x -= alloc.x;
+        y -= alloc.y;
+    }
+#endif
 
     if (w <= 0 || h <= 0)
         return false;
@@ -1695,12 +1706,8 @@ gtk_window_button_press_callback( GtkWidget* WXUNUSED_IN_GTK3(widget),
         // (a) it's a command event and so is propagated to the parent
         // (b) under some ports it can be generated from kbd too
         // (c) it uses screen coords (because of (a))
-        wxContextMenuEvent evtCtx(
-            wxEVT_CONTEXT_MENU,
-            win->GetId(),
-            win->ClientToScreen(event.GetPosition()));
-        evtCtx.SetEventObject(win);
-        return win->GTKProcessEvent(evtCtx);
+        const wxPoint pos = win->ClientToScreen(event.GetPosition());
+        return win->WXSendContextMenuEvent(pos);
     }
 
     return FALSE;
@@ -5063,6 +5070,7 @@ void wxWindowGTK::GTKSendPaintEvents(const GdkRegion* region)
 
     m_paintContext = cr;
     m_updateRegion = wxRegion(int(x1), int(y1), int(x2 - x1), int(y2 - y1));
+    m_nativeUpdateRegion = m_updateRegion;
 #else // !__WXGTK3__
     m_updateRegion = wxRegion(region);
 #if wxGTK_HAS_COMPOSITING_SUPPORT
@@ -5668,6 +5676,12 @@ void wxWindowGTK::GTKFindWindow(GtkWidget* widget, wxArrayGdkWindows& windows)
 
 #if wxUSE_MENUS_NATIVE
 
+struct wxPopupMenuPositionCallbackData
+{
+    wxPoint pos;
+    wxMenu *menu;
+};
+
 extern "C" {
 static
 void wxPopupMenuPositionCallback( GtkMenu *menu,
@@ -5675,7 +5689,7 @@ void wxPopupMenuPositionCallback( GtkMenu *menu,
                                   gboolean * WXUNUSED(whatever),
                                   gpointer user_data )
 {
-    // ensure that the menu appears entirely on screen
+    // ensure that the menu appears entirely on the same display as the window
     GtkRequisition req;
 #ifdef __WXGTK3__
     gtk_widget_get_preferred_size(GTK_WIDGET(menu), &req, NULL);
@@ -5683,14 +5697,24 @@ void wxPopupMenuPositionCallback( GtkMenu *menu,
     gtk_widget_get_child_requisition(GTK_WIDGET(menu), &req);
 #endif
 
-    wxSize sizeScreen = wxGetDisplaySize();
-    wxPoint *pos = (wxPoint*)user_data;
+    const wxPopupMenuPositionCallbackData&
+        data = *static_cast<wxPopupMenuPositionCallbackData*>(user_data);
 
-    gint xmax = sizeScreen.x - req.width,
-         ymax = sizeScreen.y - req.height;
+    const wxRect
+        rect = wxDisplay(data.menu->GetInvokingWindow()).GetClientArea();
 
-    *x = pos->x < xmax ? pos->x : xmax;
-    *y = pos->y < ymax ? pos->y : ymax;
+    wxPoint pos = data.pos;
+    if ( pos.x < rect.x )
+        pos.x = rect.x;
+    if ( pos.y < rect.y )
+        pos.y = rect.y;
+    if ( pos.x + req.width > rect.GetRight() )
+        pos.x = rect.GetRight() - req.width;
+    if ( pos.y + req.height > rect.GetBottom() )
+        pos.y = rect.GetBottom() - req.height;
+
+    *x = pos.x;
+    *y = pos.y;
 }
 }
 
@@ -5698,7 +5722,7 @@ bool wxWindowGTK::DoPopupMenu( wxMenu *menu, int x, int y )
 {
     wxCHECK_MSG( m_widget != NULL, false, wxT("invalid window") );
 
-    wxPoint pos;
+    wxPopupMenuPositionCallbackData data;
     gpointer userdata;
     GtkMenuPositionFunc posfunc;
     if ( x == -1 && y == -1 )
@@ -5709,8 +5733,9 @@ bool wxWindowGTK::DoPopupMenu( wxMenu *menu, int x, int y )
     }
     else
     {
-        pos = ClientToScreen(wxPoint(x, y));
-        userdata = &pos;
+        data.pos = ClientToScreen(wxPoint(x, y));
+        data.menu = menu;
+        userdata = &data;
         posfunc = wxPopupMenuPositionCallback;
     }
 
@@ -5869,6 +5894,7 @@ void wxWindowGTK::DoCaptureMouse()
     gdk_seat_grab(seat, window, GDK_SEAT_CAPABILITY_POINTER, false, NULL, NULL, NULL, 0);
 #else
     const GdkEventMask mask = GdkEventMask(
+        GDK_SCROLL_MASK |
         GDK_BUTTON_PRESS_MASK |
         GDK_BUTTON_RELEASE_MASK |
         GDK_POINTER_MOTION_HINT_MASK |

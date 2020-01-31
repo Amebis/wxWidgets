@@ -175,14 +175,6 @@
 #   undef  wxUSE_DEBUG_NEW_ALWAYS
 #   define wxUSE_DEBUG_NEW_ALWAYS          0
 
-/* some Cygwin versions don't have wcslen */
-#   if defined(__CYGWIN__) || defined(__CYGWIN32__)
-#   if ! ((__GNUC__>2) ||((__GNUC__==2) && (__GNUC_MINOR__>=95)))
-#       undef wxUSE_WCHAR_T
-#       define wxUSE_WCHAR_T 0
-#   endif
-#endif
-
 #endif /* __GNUWIN32__ */
 
 /* MinGW32 doesn't provide wincred.h defining the API needed by this */
@@ -387,6 +379,15 @@
 #       else
 #           undef wxUSE_DRAG_AND_DROP
 #           define wxUSE_DRAG_AND_DROP 0
+#       endif
+#   endif
+
+#   if wxUSE_ACCESSIBILITY
+#       ifdef wxABORT_ON_CONFIG_ERROR
+#           error "wxUSE_ACCESSIBILITY requires wxUSE_OLE"
+#       else
+#           undef wxUSE_ACCESSIBILITY
+#           define wxUSE_ACCESSIBILITY 0
 #       endif
 #   endif
 #endif /* !wxUSE_OLE */
