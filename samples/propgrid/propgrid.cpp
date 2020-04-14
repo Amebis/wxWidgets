@@ -1149,8 +1149,7 @@ void FormMain::PopulateWithStandardItems ()
     // Set test information for cells in columns 3 and 4
     // (reserve column 2 for displaying units)
     wxPropertyGridIterator it;
-    int bmpH = pg->GetGrid()->GetRowHeight() - 2;
-    wxBitmap bmp = wxArtProvider::GetBitmap(wxART_FOLDER, wxART_OTHER, wxSize(bmpH, bmpH));
+    wxBitmap bmp = wxArtProvider::GetBitmap(wxART_FOLDER);
 
     for ( it = pg->GetGrid()->GetIterator();
           !it.AtEnd();
@@ -2717,6 +2716,12 @@ void FormMain::OnShowHeader( wxCommandEvent& event )
 
 void FormMain::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
+    wxPlatformInfo pi = wxPlatformInfo::Get();
+    wxString toolkit = wxString::Format("%s %i.%i.%i", pi.GetPortIdName(),
+                                        pi.GetToolkitMajorVersion(),
+                                        pi.GetToolkitMinorVersion(),
+                                        pi.GetToolkitMicroVersion());
+
     wxString msg;
     msg.Printf( "wxPropertyGrid Sample"
 #if wxUSE_UNICODE
@@ -2735,8 +2740,8 @@ void FormMain::OnAbout(wxCommandEvent& WXUNUSED(event))
 #endif
                 "\n\n"
                 "Programmed by %s\n\n"
-                "Using %s\n\n",
-            "Jaakko Salli", wxVERSION_STRING
+                "Using %s (%s)\n\n",
+            "Jaakko Salli", wxVERSION_STRING, toolkit
             );
 
     wxMessageBox(msg, "About", wxOK | wxICON_INFORMATION, this);

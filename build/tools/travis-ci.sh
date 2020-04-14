@@ -26,7 +26,10 @@ case $wxTOOLSET in
 
         echo 'travis_fold:start:building'
         echo 'Building...'
-        cmake --build . -- $wxJOBS
+        if [ "$wxCMAKE_GENERATOR" == "Xcode" ]; then
+            wxTOOL_ARG="-quiet"
+        fi
+        cmake --build . -- $wxJOBS $wxTOOL_ARG
         echo 'travis_fold:end:building'
 
         if [ "$wxCMAKE_TESTS" != "OFF" ]; then
@@ -59,6 +62,7 @@ case $wxTOOLSET in
         echo -en 'travis_fold:end:script.build\\r'
 
         echo 'Building tests...' && echo -en 'travis_fold:start:script.tests\\r'
+        make -C tests $wxJOBS failtest
         make -C tests $wxJOBS
         echo -en 'travis_fold:end:script.tests\\r'
 

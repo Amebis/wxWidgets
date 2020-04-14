@@ -27,26 +27,19 @@ class WXDLLIMPEXP_FWD_PROPGRID wxPropertyGrid;
 class wxPGWindowList
 {
 public:
-    wxPGWindowList()
+    wxPGWindowList(wxWindow* primary, wxWindow* secondary = NULL)
+        : m_primary(primary)
+        , m_secondary(secondary)
     {
-        m_primary = m_secondary = NULL;
     }
 
-    void SetSecondary( wxWindow* secondary ) { m_secondary = secondary; }
+    void SetSecondary(wxWindow* secondary) { m_secondary = secondary; }
+
+    wxWindow* GetPrimary() const { return m_primary; }
+    wxWindow* GetSecondary() const { return m_secondary; }
 
     wxWindow*   m_primary;
     wxWindow*   m_secondary;
-
-    wxPGWindowList( wxWindow* a )
-    {
-        m_primary = a;
-        m_secondary = NULL;
-    }
-    wxPGWindowList( wxWindow* a, wxWindow* b )
-    {
-        m_primary = a;
-        m_secondary = b;
-    }
 };
 
 // -----------------------------------------------------------------------
